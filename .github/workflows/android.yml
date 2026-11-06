@@ -23,7 +23,7 @@ jobs:
           python-version: '3.12'
       - name: Install Android SDK packages
         run: |
-          if ! sdkmanager 'platforms;android-36' 'build-tools;35.0.0' > sdk-install.log 2>&1; then
+          if ! "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-36' 'build-tools;35.0.0' > sdk-install.log 2>&1; then
             tail -30 sdk-install.log | while IFS= read -r line; do echo "::error::$line"; done
             exit 1
           fi
