@@ -1,0 +1,87 @@
+name: Publish Android preview
+on:
+  push:
+    branches: [feat/preview-release-workflow]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-preview-0.1.0-1
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: 1326007879-sys/chatgpt-01
+      SOURCE_COMMIT: de82df77a69a6f11e0d3da5988d6cbef6a77e97b
+      TAG: v0.1.0-preview.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: de82df77a69a6f11e0d3da5988d6cbef6a77e97b
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - run: python -m pip install -r source/requirements-dev.txt
+      - working-directory: source
+        run: |
+          python -m pytest -q
+          python -m ruff check scripts tools tests
+          bash android/gradlew -p android testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest -PpetPython="$(command -v python)" --console=plain
+      - name: Prepare and publish verified assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "$GH_REPO"
+          test "$(git -C source rev-parse HEAD)" = "$SOURCE_COMMIT"
+          gh api "repos/$GH_REPO/releases/436010849" > release.json
+          python - <<'PY'
+          import json
+          r=json.load(open('release.json'))
+          assert r['draft'] and r['prerelease'] and r['tag_name']=='v0.1.0-preview.1', 'Refuse to overwrite published or unexpected release'
+          assert r['target_commitish']=='de82df77a69a6f11e0d3da5988d6cbef6a77e97b', 'Unexpected release target'
+          assert not r['assets'], 'Refuse to overwrite existing attachments'
+          PY
+          mkdir publication
+          cp docs/releases/v0.1.0-preview.1/{INSTALL.md,KNOWN_ISSUES.md} source/LICENSE source/THIRD_PARTY_NOTICES.md publication/
+          cp source/android/app/build/outputs/apk/debug/app-debug.apk publication/chatgpt01-petai-0.1.0-preview.1-debug.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs publication/*.apk > publication/SIGNATURE.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging publication/*.apk > publication/APK-METADATA.txt
+          python - <<'PY'
+          import os,json,pathlib,hashlib
+          p=pathlib.Path('publication'); a=next(p.glob('*.apk'))
+          metadata=(p/'APK-METADATA.txt').read_text()
+          assert "name='io.github.chatgpt01.petai'" in metadata
+          assert "versionName='0.1.0-preview.1'" in metadata
+          data={'repository':os.environ['GH_REPO'],'commit':os.environ['SOURCE_COMMIT'],'workflow_commit':os.environ['GITHUB_SHA'],'tag':os.environ['TAG'],'apk':a.name,'apk_bytes':a.stat().st_size,'apk_sha256':hashlib.sha256(a.read_bytes()).hexdigest(),'signing':'Ephemeral GitHub Actions Debug signing; not production signing','run_url':f"https://github.com/{os.environ['GH_REPO']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"}
+          (p/'SOURCE.json').write_text(json.dumps(data,indent=2)+'\n')
+          with (p/'SHA256SUMS.txt').open('w') as out:
+              for f in sorted(p.iterdir()):
+                  if f.name!='SHA256SUMS.txt': out.write(hashlib.sha256(f.read_bytes()).hexdigest()+'  '+f.name+'\n')
+          PY
+          (cd publication && sha256sum -c SHA256SUMS.txt)
+          gh release upload "$TAG" publication/* --repo "$GH_REPO"
+          gh api "repos/$GH_REPO/releases/436010849" > uploaded.json
+          python - <<'PY'
+          import json,pathlib,hashlib
+          r=json.load(open('uploaded.json')); assets={a['name']:a for a in r['assets']}
+          for f in pathlib.Path('publication').iterdir():
+              a=assets[f.name]; assert a['state']=='uploaded' and a['size']==f.stat().st_size
+              assert a.get('digest')=='sha256:'+hashlib.sha256(f.read_bytes()).hexdigest(), 'Remote checksum mismatch'
+          PY
+          gh release edit "$TAG" --repo "$GH_REPO" --notes-file docs/releases/v0.1.0-preview.1/RELEASE_NOTES.md --draft=false --prerelease --latest=false
