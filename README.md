@@ -1,20 +1,35 @@
-# 安卓 AI 桌宠 · 云环境项目入口
+# Android AI 桌宠
 
-本仓库保存项目关联信息，继续沿用已发布的云环境设置，不替换其安装脚本、启动说明、网络或凭据配置。
+独立安卓项目，基于 [1326007879-sys/dsh-pet-indesktop](https://github.com/1326007879-sys/dsh-pet-indesktop) 的安卓实现继续开发。原始仓库保留溯源，不向其写入或合并。
 
-- 源码仓库：[dsh-pet-indesktop](https://github.com/1326007879-sys/dsh-pet-indesktop)
-- 独立安卓开发分支：[feat/android-ai-phase1](https://github.com/1326007879-sys/dsh-pet-indesktop/tree/feat/android-ai-phase1)
-- 已保存的开发提交：`ba61d893e6d8ea5d2e80c6edf3b5355b2aef4e45`
-- 最初源码基线：`34d810b1eadd98d00e7cb9b3b51428a45b5bf03e`。源码仓库 main 保留溯源，本次不合并或推送 main。
-- 机器可读映射：[project.json](project.json)
+当前包含悬浮桌宠、动画/拖动/碰撞/伙伴、文字 AI 流式聊天、模型配置、停止/重试和本地会话恢复。
+主界面或长按菜单选择“和主宠聊天”；聊天本身不要求悬浮权限。模型凭据仅在应用内输入。
 
-## 后续开发
+## 目录
 
-先读取 project.json，再检查 `/workspace/dsh-pet-indesktop` 的分支和 git status；保留已有检出与未提交改动，不另建 worktree，也不直接重置或覆盖。
-本仓库与源码仓库是同一项目的环境入口和实现；关联索引不自动执行安装或更改云环境配置。
+| 目录 | 职责 |
+|---|---|
+| `android/` | Kotlin/Compose 应用、单元测试及设备测试 |
+| `assets/` | 构建所需的 11 段核心动画、定位/移动元数据和点击音效 |
+| `tools/asset_pipeline/` | 从上游分离的构建用转换器、图标处理和默认台词；不包含桌面应用 |
+| `scripts/` | 素材导出等构建入口 |
+| `tests/` | 素材构建契约测试 |
+| `docs/` | 构建、来源、架构、验收与历史开发记录 |
+| `.github/workflows/` | 检查与 Debug 构建；不自动发布 Release |
 
-## 当前状态
+## 开发入口
 
-安卓第一阶段为开发测试版。构建、自动化和一项模拟器 Keystore 测试已有通过记录；界面设备验收及真实模型联调仍有未完成项目。
-具体证据见开发分支的 docs/ANDROID.md 与 docs/PR-REPORT-ANDROID-CHAT-ACCEPTANCE-2026-11-05.md。
-密钥仅在应用或安全配置界面输入，不保存到此仓库。
+- [构建与检查](docs/BUILD.md)
+- [来源与许可证](docs/PROVENANCE.md)
+- [当前验收状态](docs/STATUS.md)
+- [模块说明](docs/ARCHITECTURE.md)
+
+`main` 用于保存新项目基线，后续修改在 `feat/*` 分支开发，再通过 PR 合入。
+本仓库同时管理源码和构建支持文件，平台云环境的网络/凭据/安装配置仍由平台保存，本次不更改或发布环境。
+
+代码保留 MIT 许可。内置角色素材另有个人、非商业使用限制，不能将代码许可理解为素材可商用；详见 THIRD_PARTY_NOTICES.md。
+当前为开发测试版本，真实手机、UI稳定性和真实模型服务尚未完成全部验收。
+
+新应用包名：`io.github.chatgpt01.petai`，初始版本 `0.1.0-preview.1`，与原版独立安装。
+
+Git 推送不会自动更新平台已发布的文件系统快照；新任务若从旧快照恢复，应保留本地改动后更新本仓库，不需要重写平台环境配置。

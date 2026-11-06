@@ -1,0 +1,21 @@
+# Generated Android/Gradle and Python files
+android/**/build/
+android/.gradle/
+android/.kotlin/
+android/local.properties
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+assets/**/frameseq/
+# Local tools, reports, artifacts and credentials
+.scratch/
+local-tools/
+dist/
+*.apk
+*.aab
+*.keystore
+*.jks
+.env
+.env.*
+!.env.example

@@ -1,13 +1,12 @@
 {
   "schema_version": 1,
-  "project": "Android AI desktop pet",
-  "environment_repository": "https://github.com/1326007879-sys/chatgpt-01",
-  "source": {
+  "project": "Android AI pet",
+  "repository": "https://github.com/1326007879-sys/chatgpt-01",
+  "workspace_path": "/workspace/chatgpt-01",
+  "development_branch": "feat/android-ai-phase1",
+  "upstream": {
     "repository": "https://github.com/1326007879-sys/dsh-pet-indesktop",
-    "development_branch": "feat/android-ai-phase1",
-    "commit": "ba61d893e6d8ea5d2e80c6edf3b5355b2aef4e45",
-    "original_baseline": "34d810b1eadd98d00e7cb9b3b51428a45b5bf03e",
-    "workspace_path": "/workspace/dsh-pet-indesktop"
+    "baseline": "34d810b1eadd98d00e7cb9b3b51428a45b5bf03e"
   },
-  "environment_configuration": "Keep the existing published environment settings; this file is a repository association index, not an executable setup script."
+  "cloud_environment": "Existing platform settings are preserved; no automatic environment publication."
 }
