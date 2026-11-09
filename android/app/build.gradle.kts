@@ -4,15 +4,18 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val previewInstall = providers.gradleProperty("petPreviewInstall").orNull == "true"
+
 android {
     namespace = "io.github.chatgpt01.petai"
     compileSdk = 36
     defaultConfig {
-        applicationId = "io.github.chatgpt01.petai"
+        applicationId = if (previewInstall) "io.github.chatgpt01.petai.preview" else "io.github.chatgpt01.petai"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0-preview.1"
+        versionCode = 2
+        versionName = "0.1.0-preview.2"
+        manifestPlaceholders["petAppLabel"] = if (previewInstall) "AI 桌宠·预览" else "@string/app_name"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {

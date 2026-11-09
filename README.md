@@ -1,7 +1,7 @@
 # Android AI 桌宠
 
 <p align="center">
-  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.1"><img alt="首个开发预览版" src="https://img.shields.io/badge/版本-v0.1.0--preview.1-blue"></a>
+  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2"><img alt="六模块验收预览版" src="https://img.shields.io/badge/版本-v0.1.0--preview.2-blue"></a>
   <img alt="Android 8.0 及以上" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84">
   <a href="LICENSE"><img alt="代码许可 MIT" src="https://img.shields.io/badge/代码许可-MIT-orange"></a>
   <a href="https://github.com/1326007879-sys/chatgpt-01/issues"><img alt="问题反馈" src="https://img.shields.io/github/issues/1326007879-sys/chatgpt-01"></a>
@@ -10,13 +10,13 @@
 一个基于 **Kotlin + Jetpack Compose** 的安卓悬浮桌宠，提供动画互动和 OpenAI Chat Completions 兼容的流式文字聊天。
 基于 [dsh-pet-indesktop](https://github.com/1326007879-sys/dsh-pet-indesktop) 的安卓实现独立开发，源码、安装包和后续更新由本仓库维护。
 
-> **当前版本：v0.1.0-preview.1 · 首个开发预览版**
+> **当前版本：v0.1.0-preview.2 · 六模块验收预览版**
 >
 > 已提供 Android APK，供安装测试和反馈。自动化测试与构建通过；**新包名的真机、完整界面稳定性和真实模型服务仍待验收**。当前为 Debug 签名，并非稳定正式版。
 
 <p align="center">
-  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.1/chatgpt01-petai-0.1.0-preview.1-debug.apk"><strong>下载安卓安装包</strong></a> ·
-  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.1">发布说明与全部附件</a> ·
+  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.2/chatgpt01-petai-0.1.0-preview.2-debug.apk"><strong>下载安卓安装包</strong></a> ·
+  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2">发布说明与全部附件</a> ·
   <a href="https://github.com/1326007879-sys/chatgpt-01/issues">反馈问题</a>
 </p>
 
@@ -38,11 +38,11 @@
 
 | 项目 | 当前发布内容 |
 |---|---|
-| 版本 | `v0.1.0-preview.1`，开发预览版 |
+| 版本 | `v0.1.0-preview.2`，开发预览版 |
 | 系统 | Android 8.0 / API 26 及以上 |
-| 安装文件 | [chatgpt01-petai-0.1.0-preview.1-debug.apk](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.1/chatgpt01-petai-0.1.0-preview.1-debug.apk) |
+| 安装文件 | [chatgpt01-petai-0.1.0-preview.2-debug.apk](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.2/chatgpt01-petai-0.1.0-preview.2-debug.apk) |
 | 大小 | 约 155 MiB |
-| 应用名称 / 包名 | AI 桌宠 / `io.github.chatgpt01.petai` |
+| 应用名称 / 包名 | AI 桌宠·预览 / `io.github.chatgpt01.petai.preview` |
 | 签名 | GitHub Actions 构建的 Debug 签名，非正式发行签名 |
 
 也可打开 [Releases](https://github.com/1326007879-sys/chatgpt-01/releases)，进入对应版本，展开 **Assets** 下载 `.apk`。
@@ -57,7 +57,7 @@
 
 1. 在安卓手机上下载上述 APK，点击打开。
 2. 如果系统提示未允许安装，按提示为下载所用的浏览器或文件管理器授权“安装未知应用”。
-3. 安装完成后打开 **AI 桌宠**。
+3. 安装完成后打开 **AI 桌宠·预览**。
 4. 需要悬浮宠物时，按应用提示授予“显示在其他应用上层 / 悬浮窗”权限；各品牌系统名称可能不同。
 5. 需要 AI 聊天时，进入“和主宠聊天”配置模型，详见下方教程。
 
@@ -65,7 +65,7 @@
 
 ### 升级与卸载
 
-本项目与原版使用不同包名，可以独立安装，不读取原版的私有配置和聊天数据。
+本次发布包采用独立包名 `io.github.chatgpt01.petai.preview`，与旧预览版及原版并存，不读取它们的私有配置和聊天数据；模型配置需在新包单独填写。
 当前使用 Debug 签名，**不保证不同构建或未来正式版能覆盖升级**。若遇到签名不一致，不要在未考虑数据保留的情况下直接卸载。
 通过系统“设置 → 应用 → AI 桌宠 → 卸载”删除应用；卸载或清除应用数据会删除本机配置、密钥存储和聊天历史。本版没有应用内历史导出或云同步功能。
 
@@ -127,10 +127,10 @@
 - 新包名的真机安装、界面、键盘、旋转、后台稳定性及真实模型调用尚待完整验收。
 - 迁移前软件模拟器的界面测试曾出现进程退出，尚未完成定位。
 - 正式签名及升级迁移方案未确定；预览版不作生产环境兼容承诺。
-- 暂不提供语音聊天、主动识屏、多会话管理、历史导出或云同步。
+- 语音输入和朗读依赖设备服务与中文语音数据，真实效果尚待验收；无连续语音通话、唤醒词、声音克隆、主动识屏、多会话、历史导出或云同步。
 - 历史文件有大小上限，暂未提供分页和清理界面。
 
-完整说明见 [当前版本已知问题](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.1/KNOWN_ISSUES.md)。
+完整说明见 [当前版本已知问题](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.2/KNOWN_ISSUES.md)。
 后续优先根据真机反馈完善稳定性、模型兼容和签名升级方案；新功能在实际实现和验证后再补充到本页，暂无发布日期承诺。
 
 ## 反馈与求助
@@ -152,6 +152,8 @@
 
 | 版本 | 日期 | 内容 |
 |---|---|---|
+| [v0.1.0-preview.2](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2) | 2026-11-09 | 六模块验收版：动作选择、扩展预备入口、语音输入、系统朗读及音色选择；独立测试包 |
+
 | [v0.1.0-preview.1](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.1) | 2026-11-06 | 首个独立安卓开发预览版：悬浮桌宠、主宠文字 AI 对话、模型配置、停止与重试、本地历史与中断恢复 |
 
 ## 开发者与贡献
@@ -170,7 +172,7 @@
 - [构建与检查](docs/BUILD.md)
 - [模块与依赖](docs/ARCHITECTURE.md)
 - [当前验收状态](docs/STATUS.md)
-- [发布工作流](https://github.com/1326007879-sys/chatgpt-01/blob/feat/preview-release-workflow/.github/workflows/preview-release.yml)
+- [发布工作流](https://github.com/1326007879-sys/chatgpt-01/blob/feat/android-next-update/.github/workflows/release-preview2.yml)
 
 修改在独立分支开发，通过 PR 审阅后合入。APK、工具链、缓存、模型密钥和签名私钥不提交到源码目录。
 平台云环境配置由平台管理；修改本仓库文档不会自动修改或发布云环境。
