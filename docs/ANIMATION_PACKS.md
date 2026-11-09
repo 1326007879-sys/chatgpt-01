@@ -78,7 +78,7 @@ python scripts/build_animation_packs.py --assets dist/pack-source --output dist/
 
 ## 验证
 
-本地实现及构建完成；未推送、未发布。
+本地实现及构建完成；本轮获授权准备v0.1.0-preview.3发布。
 
 - Python 13项通过，Ruff通过；JVM 159项，0失败。
 - testDebugUnitTest、lintDebug、assembleDebug、assembleDebugAndroidTest全部通过；lint为0错误、17警告、8提示。
@@ -89,6 +89,6 @@ python scripts/build_animation_packs.py --assets dist/pack-source --output dist/
 - 包含越界路径、未知文件、目录条目、尺寸上限、损坏校验、取消清理、重复安装、核心保护、损坏动作展示及租约互斥回归。
 - 管理页面设备测试已编译；adb无连接设备，未运行真机UI或实际Android文件导入/解码测试。
 
-当前开发包名及版本字段沿用旧开发基线，并非新的发行版本。GitHub已发布包未替换。
+上列校验值对应本功能开发包；preview.3发行候选会使用独立安装身份及新版本号，其准确摘要以Release附件SOURCE.json和SHA256SUMS.txt为准。旧版发布不替换。
 
 真机需要补验：文件选择→导入→启动→选择播放→停止→删除→重新启动后动作消失；同时检查中文/英文、后台取消、大文件存储不足和原有聊天/悬浮互动。

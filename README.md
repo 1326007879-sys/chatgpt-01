@@ -1,7 +1,7 @@
 # Android AI 桌宠
 
 <p align="center">
-  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2"><img alt="六模块验收预览版" src="https://img.shields.io/badge/版本-v0.1.0--preview.2-blue"></a>
+  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.3"><img alt="独立动作包预览版" src="https://img.shields.io/badge/版本-v0.1.0--preview.3-blue"></a>
   <img alt="Android 8.0 及以上" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84">
   <a href="LICENSE"><img alt="代码许可 MIT" src="https://img.shields.io/badge/代码许可-MIT-orange"></a>
   <a href="https://github.com/1326007879-sys/chatgpt-01/issues"><img alt="问题反馈" src="https://img.shields.io/github/issues/1326007879-sys/chatgpt-01"></a>
@@ -10,13 +10,13 @@
 一个基于 **Kotlin + Jetpack Compose** 的安卓悬浮桌宠，提供动画互动和 OpenAI Chat Completions 兼容的流式文字聊天。
 基于 [dsh-pet-indesktop](https://github.com/1326007879-sys/dsh-pet-indesktop) 的安卓实现独立开发，源码、安装包和后续更新由本仓库维护。
 
-> **当前版本：v0.1.0-preview.2 · 六模块验收预览版**
+> **当前版本：v0.1.0-preview.3 · 独立动作包预览版**
 >
 > 已提供 Android APK，供安装测试和反馈。自动化测试与构建通过；**新包名的真机、完整界面稳定性和真实模型服务仍待验收**。当前为 Debug 签名，并非稳定正式版。
 
 <p align="center">
-  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.2/chatgpt01-petai-0.1.0-preview.2-debug.apk"><strong>下载安卓安装包</strong></a> ·
-  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2">发布说明与全部附件</a> ·
+  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/chatgpt01-petai-0.1.0-preview.3-debug.apk"><strong>下载安卓安装包</strong></a> ·
+  <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.3">发布说明与全部附件</a> ·
   <a href="https://github.com/1326007879-sys/chatgpt-01/issues">反馈问题</a>
 </p>
 
@@ -34,25 +34,25 @@
 - [版本与变更历史](#版本与变更历史)
 - [开发者与贡献](#开发者与贡献)
 
-## 开发分支中的下一轮修改（尚未发布）
+## 本版新增功能
 
 - 语音输入调整为手机键盘听写，移除独立识别窗口。
 - 默认简体中文，提供统一的中文 / English 界面切换。
 - 默认仅内置11段核心动画，其余95段以独立动作包导入，支持安装管理和单个删除。
-- [独立动作包使用与制作](docs/ANIMATION_PACKS.md)（开发分支，尚未发布）。
+- [独立动作包使用与制作](docs/ANIMATION_PACKS.md)。
 
-以上不属于下方已发布的preview.2；验证进度与限制见 [本轮实施记录](docs/implementation/KEYBOARD-LANGUAGE-ANIMATIONS.md)。
+验证进度与限制见 [本轮实施记录](docs/implementation/KEYBOARD-LANGUAGE-ANIMATIONS.md)。
 
 ## 下载与版本选择
 
 | 项目 | 当前发布内容 |
 |---|---|
-| 版本 | `v0.1.0-preview.2`，开发预览版 |
+| 版本 | `v0.1.0-preview.3`，开发预览版 |
 | 系统 | Android 8.0 / API 26 及以上 |
-| 安装文件 | [chatgpt01-petai-0.1.0-preview.2-debug.apk](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.2/chatgpt01-petai-0.1.0-preview.2-debug.apk) |
+| 安装文件 | [chatgpt01-petai-0.1.0-preview.3-debug.apk](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/chatgpt01-petai-0.1.0-preview.3-debug.apk) |
 | 大小 | 约 155 MiB |
-| 应用名称 / 包名 | AI 桌宠·预览 / `io.github.chatgpt01.petai.preview` |
-| 签名 | GitHub Actions 构建的 Debug 签名，非正式发行签名 |
+| 应用名称 / 包名 | AI 桌宠·预览3 / `io.github.chatgpt01.petai.preview3` |
+| 签名 | 云工作区构建的 Debug 签名，非正式发行签名 |
 
 也可打开 [Releases](https://github.com/1326007879-sys/chatgpt-01/releases)，进入对应版本，展开 **Assets** 下载 `.apk`。
 `Source code (zip)` 和 `Source code (tar.gz)` 是源码压缩包，不能直接安装到手机。
@@ -66,7 +66,7 @@
 
 1. 在安卓手机上下载上述 APK，点击打开。
 2. 如果系统提示未允许安装，按提示为下载所用的浏览器或文件管理器授权“安装未知应用”。
-3. 安装完成后打开 **AI 桌宠·预览**。
+3. 安装完成后打开 **AI 桌宠·预览3**。
 4. 需要悬浮宠物时，按应用提示授予“显示在其他应用上层 / 悬浮窗”权限；各品牌系统名称可能不同。
 5. 需要 AI 聊天时，进入“和主宠聊天”配置模型，详见下方教程。
 
@@ -74,7 +74,7 @@
 
 ### 升级与卸载
 
-本次发布包采用独立包名 `io.github.chatgpt01.petai.preview`，与旧预览版及原版并存，不读取它们的私有配置和聊天数据；模型配置需在新包单独填写。
+本次发布包采用独立包名 `io.github.chatgpt01.petai.preview3`，与旧预览版及原版并存，不读取它们的私有配置和聊天数据；模型配置需在新包单独填写。
 当前使用 Debug 签名，**不保证不同构建或未来正式版能覆盖升级**。若遇到签名不一致，不要在未考虑数据保留的情况下直接卸载。
 通过系统“设置 → 应用 → AI 桌宠 → 卸载”删除应用；卸载或清除应用数据会删除本机配置、密钥存储和聊天历史。本版没有应用内历史导出或云同步功能。
 
@@ -94,6 +94,8 @@
 | AI 对话 | HTTPS Chat Completions / SSE 流式文字回复 |
 | 生成控制 | 停止生成、失败反馈和手动重试 |
 | 模型设置 | 服务地址、模型与 API Key |
+| 动画管理 | 默认11段核心，95个扩展动作可分别导入和删除 |
+| 界面语言 | 简体中文 / English，页面与菜单同步 |
 | 本地恢复 | 已保存的聊天历史和中断状态恢复，不自动重发中断请求 |
 | 密钥存储 | Android Keystore 支持的加密存储，按服务地址隔离 |
 
@@ -136,10 +138,10 @@
 - 新包名的真机安装、界面、键盘、旋转、后台稳定性及真实模型调用尚待完整验收。
 - 迁移前软件模拟器的界面测试曾出现进程退出，尚未完成定位。
 - 正式签名及升级迁移方案未确定；预览版不作生产环境兼容承诺。
-- 语音输入和朗读依赖设备服务与中文语音数据，真实效果尚待验收；无连续语音通话、唤醒词、声音克隆、主动识屏、多会话、历史导出或云同步。
+- 键盘语音由输入法提供，回复朗读依赖设备TTS与语音数据，真实效果尚待验收；无连续语音通话、唤醒词、声音克隆、主动识屏、多会话、历史导出或云同步。
 - 历史文件有大小上限，暂未提供分页和清理界面。
 
-完整说明见 [当前版本已知问题](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.2/KNOWN_ISSUES.md)。
+完整说明见 [当前版本已知问题](https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/KNOWN_ISSUES.md)。
 后续优先根据真机反馈完善稳定性、模型兼容和签名升级方案；新功能在实际实现和验证后再补充到本页，暂无发布日期承诺。
 
 ## 反馈与求助
@@ -161,9 +163,9 @@
 
 | 版本 | 日期 | 内容 |
 |---|---|---|
-| [v0.1.0-preview.2](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2) | 2026-11-09 | 六模块验收版：动作选择、扩展预备入口、语音输入、系统朗读及音色选择；独立测试包 |
-
-| [v0.1.0-preview.1](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.1) | 2026-11-06 | 首个独立安卓开发预览版：悬浮桌宠、主宠文字 AI 对话、模型配置、停止与重试、本地历史与中断恢复 |
+| [v0.1.0-preview.3](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.3) | 2026-11-09 | 核心安装包、95个独立动作包、安装管理、键盘听写和统一语言 |
+| [v0.1.0-preview.2](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.2) | 2026-11-09 | 六模块验收预览版 |
+| [v0.1.0-preview.1](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.1) | 2026-11-06 | 首个独立安卓预览版 |
 
 ## 开发者与贡献
 
@@ -181,7 +183,7 @@
 - [构建与检查](docs/BUILD.md)
 - [模块与依赖](docs/ARCHITECTURE.md)
 - [当前验收状态](docs/STATUS.md)
-- [发布工作流](https://github.com/1326007879-sys/chatgpt-01/blob/feat/android-next-update/.github/workflows/release-preview2.yml)
+- [本版发布说明](docs/releases/v0.1.0-preview.3/RELEASE.md)
 
 修改在独立分支开发，通过 PR 审阅后合入。APK、工具链、缓存、模型密钥和签名私钥不提交到源码目录。
 平台云环境配置由平台管理；修改本仓库文档不会自动修改或发布云环境。
