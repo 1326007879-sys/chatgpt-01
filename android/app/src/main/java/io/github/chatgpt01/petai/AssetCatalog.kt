@@ -18,6 +18,7 @@ data class ClipSpec(
     val curve: List<Double> = emptyList(),
     val path: String = "",
     val crop: SourceBox = SourceBox(0.0, 0.0, 640.0, 360.0),
+    val displayName: String = "",
 ) {
     val duration get() = frames / fps
 
@@ -52,7 +53,9 @@ data class AssetCatalog(
                 ClipSpec(entry.getString("id"), entry.getString("group"), entry.getDouble("fps"),
                     entry.getInt("frames"), entry.getDouble("stride"),
                     (0 until curve.length()).map { curve.getDouble(it) },
-                    entry.getString("path"), entry.getJSONArray("crop_box").box()).also {
+                    entry.getString("path"), entry.getJSONArray("crop_box").box(),
+                    entry.optString("source").substringAfterLast('/').substringBeforeLast('.')
+                        .removePrefix("点击回应-")).also {
                     require(it.frames in 1..10000 && it.fps.isFinite() && it.fps in 1.0..120.0)
                     require(it.path.matches(Regex("clips/[a-z]+_[a-f0-9]{12}")))
                     require(it.crop.width > 0 && it.crop.height > 0)

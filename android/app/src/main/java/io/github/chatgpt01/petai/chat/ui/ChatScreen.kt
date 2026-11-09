@@ -18,11 +18,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import io.github.chatgpt01.petai.chat.*
+import io.github.chatgpt01.petai.R
+import io.github.chatgpt01.petai.chat.voice.SpeechUiState
+import androidx.compose.ui.res.stringResource
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ChatScreen(state: ConversationState, input: ChatInputState, onEdit: (String) -> Unit,
                onSend: () -> Unit, onStop: () -> Unit, onRetry: (String) -> Unit,
-               onSettings: () -> Unit, onBack: () -> Unit) {
+               onSettings: () -> Unit, onBack: () -> Unit,
+               speech: SpeechUiState = SpeechUiState(), voiceNotice: String? = null,
+               onVoiceInput: () -> Unit = {}, onVoiceSettings: () -> Unit = {},
+               onRead: (String) -> Unit = {}, onStopRead: () -> Unit = {}) {
     val list = rememberLazyListState()
     val follow = !list.canScrollForward
     LaunchedEffect(state.session.messages.size, state.session.messages.lastOrNull()?.content) {
@@ -51,6 +58,10 @@ fun ChatScreen(state: ConversationState, input: ChatInputState, onEdit: (String)
                         else MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.medium) {
                         SelectionContainer { Text(message.content.ifEmpty { "…" }, Modifier.padding(14.dp)) }
                     }
+                    if (message.role == MessageRole.ASSISTANT && message.status == MessageStatus.COMPLETED)
+                        TextButton(onClick = { onRead(message.content) }, enabled = speech.canSpeak && !state.generation.isRunning) {
+                            Text(stringResource(R.string.voice_read_reply))
+                        }
                     val status = statusText(message)
                     if (status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall,
                         color = if (message.status == MessageStatus.FAILED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
@@ -58,6 +69,15 @@ fun ChatScreen(state: ConversationState, input: ChatInputState, onEdit: (String)
                         TextButton(onClick = { onRetry(message.id) }, enabled = !input.submitting) { Text("重试") }
                 }
             }
+        }
+        speech.notice?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+        voiceNotice?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            TextButton(onClick = onVoiceInput, enabled = !input.submitting && !state.generation.isRunning) {
+                Text(stringResource(R.string.voice_input))
+            }
+            TextButton(onClick = onVoiceSettings) { Text(stringResource(R.string.voice_settings)) }
+            if (speech.speaking) TextButton(onClick = onStopRead) { Text(stringResource(R.string.voice_stop)) }
         }
         input.notice?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("chat_notice")) }
         OutlinedTextField(value = input.draft, onValueChange = onEdit, label = { Text("消息") },
