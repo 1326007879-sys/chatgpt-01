@@ -24,6 +24,7 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true; buildConfig = true }
+    bundle { language { enableSplit = false } } // Both app-selectable languages must remain installed.
     sourceSets["main"].assets.srcDir(layout.buildDirectory.dir("generated/petAssets"))
     sourceSets["main"].res.srcDir(layout.buildDirectory.dir("generated/petRes"))
     testOptions { unitTests.isReturnDefaultValues = true }
@@ -33,6 +34,9 @@ android {
 val exportPetAssets by tasks.registering(Exec::class) {
     val repository = rootProject.projectDir.parentFile
     val python = providers.gradleProperty("petPython").orElse("python")
+    val animationBatch = providers.gradleProperty("petAnimationBatch").orElse("3")
+    require(animationBatch.get().toInt() in 0..3) { "petAnimationBatch must be 0, 1, 2 or 3" }
+    inputs.property("animationBatch", animationBatch)
     inputs.dir(repository.resolve("assets/characters/shenshen/videos"))
     inputs.dir(repository.resolve("assets/sounds/duck"))
     inputs.file(repository.resolve("scripts/export_android_assets.py"))
@@ -45,9 +49,14 @@ val exportPetAssets by tasks.registering(Exec::class) {
     workingDir(repository)
     commandLine(python.get(), "scripts/export_android_assets.py", "--output",
         layout.buildDirectory.dir("generated/petAssets").get().asFile.absolutePath,
-        "--res-output", layout.buildDirectory.dir("generated/petRes").get().asFile.absolutePath)
+        "--res-output", layout.buildDirectory.dir("generated/petRes").get().asFile.absolutePath,
+        "--max-batch", animationBatch.get())
 }
 tasks.named("preBuild").configure { dependsOn(exportPetAssets) }
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    // Catalog contract tests must rerun when a different animation batch is built.
+    inputs.file(layout.buildDirectory.file("generated/petAssets/pet/manifest.json"))
+}
 
 dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

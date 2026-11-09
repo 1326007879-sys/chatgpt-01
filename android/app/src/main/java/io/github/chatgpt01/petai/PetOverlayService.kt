@@ -153,10 +153,28 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         override fun onReceive(context: Context, intent: Intent) { updateVisibility() }
     }
 
+    // Resolve overlay menus and notifications against the current app language.
+    private var localizedResources: android.content.res.Resources? = null
+    override fun getResources(): android.content.res.Resources = localizedResources
+        ?: AppLanguage.wrap(baseContext).resources.also { localizedResources = it }
+    private val languageListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        handler.post {
+            localizedResources = null
+            closeMenu()
+            if (started) {
+                getSystemService(NotificationManager::class.java).createNotificationChannel(
+                    NotificationChannel(CHANNEL, getString(R.string.channel_name), NotificationManager.IMPORTANCE_LOW))
+                surfaces.values.forEach { it.view?.contentDescription = getString(R.string.app_name) }
+                updateNotification()
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         windows = getSystemService(WindowManager::class.java)
         preferences = PetPreferences(this)
+        getSharedPreferences(AppLanguage.STORE, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(languageListener)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -586,7 +604,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         }
         val frame = surface.cursor?.request(clip, engine.frameIndex)
         if (frame == null) PetRuntime.staleFrames.incrementAndGet()
-        view.present(frame, clip.crop, engine.facingRight)
+        view.present(frame, clip.crop, clip.shouldMirror(engine.facingRight))
         positionBubble(surface)
     }
 
@@ -643,7 +661,8 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         fun action(label: Int, run: () -> Unit) = namedAction(getString(label), run)
         if (animationPicker) {
             panel.addView(TextView(this).apply {
-                text = getString(R.string.animation_picker_hint)
+                text = getString(R.string.animation_picker_description, getString(R.string.animation_picker_hint),
+                    getString(R.string.animation_count, surface.handle.engine.availableActions.size))
                 setTextColor(Color.DKGRAY)
                 val pad = (12 * resources.displayMetrics.density).roundToInt()
                 setPadding(pad, pad, pad, pad)
@@ -652,8 +671,27 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
                 android.widget.Toast.makeText(this, R.string.animation_import_pending,
                     android.widget.Toast.LENGTH_LONG).show()
             }
-            surface.handle.engine.availableActions.forEachIndexed { index, clip ->
-                val label = clip.displayName.ifBlank {
+            var lastBatch = -1
+            val english = AppLanguage.selected(this) == "en"
+            val sortedActions = surface.handle.engine.availableActions.sortedWith(
+                compareBy({ it.batch }, { it.group }, { it.displayName }))
+            sortedActions.forEachIndexed { index, clip ->
+                if (clip.batch != lastBatch) {
+                    lastBatch = clip.batch
+                    panel.addView(TextView(this).apply {
+                        text = getString(when (clip.batch) {
+                            1 -> R.string.animation_batch_common
+                            2 -> R.string.animation_batch_other
+                            3 -> R.string.animation_batch_balance
+                            else -> R.string.animation_batch_core
+                        })
+                        setTextColor(Color.DKGRAY)
+                        val pad = (12 * resources.displayMetrics.density).roundToInt()
+                        setPadding(pad, pad, pad, pad)
+                    })
+                }
+                val localizedName = if (english) clip.englishName else clip.displayName
+                val label = localizedName.ifBlank {
                     val group = when (clip.group) {
                         "idle" -> R.string.animation_idle
                         "click" -> R.string.animation_click
@@ -800,6 +838,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        localizedResources = null
         super.onConfigurationChanged(newConfig)
         if (started) { reloadOptions(); rememberPositions() }
     }
@@ -810,6 +849,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         Choreographer.getInstance().removeFrameCallback(this)
         handler.removeCallbacksAndMessages(null)
         preferences.unsubscribe(preferenceListener)
+        getSharedPreferences(AppLanguage.STORE, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(languageListener)
         if (registered) {
             unregisterReceiver(screenReceiver)
             getSystemService(AppOpsManager::class.java).stopWatchingMode(permissionListener)

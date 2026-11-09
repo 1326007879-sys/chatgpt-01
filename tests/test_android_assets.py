@@ -87,3 +87,61 @@ def test_missing_click_sound_fails_build(tmp_path):
     (sounds / "Ya1.mp3").write_bytes(b"press bytes")
     with pytest.raises(FileNotFoundError, match="Ya2.mp3"):
         copy_click_sounds(sounds, tmp_path / "res")
+
+
+def test_random_and_nested_event_animations_export_and_return_to_same_geometry(tmp_path):
+    video, clips = prepared(tmp_path)
+    template = next(iter(clips.values()))
+    for name in ("random/nap.webm", "events/balance/empty.webm"):
+        source = video / name
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_bytes(b"animation")
+        clips[source] = template
+    result = export_prepared(video, clips, tmp_path / "mobile", [])
+    assert len(result["clips"]) == 7
+    extra = {c["source"]: c for c in result["clips"]}
+    assert extra["random/nap.webm"]["group"] == "random"
+    assert extra["events/balance/empty.webm"]["group"] == "events"
+    assert len({c["id"] for c in result["clips"]}) == 7
+    for c in result["clips"]:
+        assert c["crop_box"] == [0, 0, 8, 8]
+
+
+def test_bundled_catalog_matches_upstream_source_hashes_and_all_three_batches():
+    import hashlib
+    from collections import Counter
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    catalog = json.loads((root / "tools/asset_pipeline/animation_catalog.json").read_text(encoding="utf-8"))
+    assert catalog["commit"] == "34d810b1eadd98d00e7cb9b3b51428a45b5bf03e"
+    entries = catalog["clips"]
+    assert Counter(c["batch"] for c in entries) == {0: 11, 1: 12, 2: 77, 3: 6}
+    assert len({c["source"] for c in entries}) == 106
+    for c in entries:
+        path = root / "assets/characters/shenshen/videos" / c["source"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == c["sha256"]
+        assert c["name_en"].strip()
+
+
+def test_switching_to_smaller_batch_removes_unselected_generated_frames(tmp_path):
+    video, clips = prepared(tmp_path)
+    output = tmp_path / "mobile"
+    extra = video / "random" / "nap.webm"
+    extra.parent.mkdir()
+    extra.write_bytes(b"extra")
+    expanded = export_prepared(video, {**clips, extra: next(iter(clips.values()))}, output, [])
+    cold = next(c for c in expanded["clips"] if c["group"] == "random")
+    cold_dir = output / "pet" / cold["path"]
+    assert cold_dir.is_dir()
+    smaller = export_prepared(video, clips, output, [])
+    assert len(smaller["clips"]) == 5
+    assert not cold_dir.exists()
+    assert len(list((output / "pet/clips").iterdir())) == 5
+
+
+def test_text_animation_keeps_its_no_mirror_flag(tmp_path):
+    video, clips = prepared(tmp_path)
+    (video / "text_clips.json").write_text(json.dumps({"no_mirror": ["pet"]}))
+    result = export_prepared(video, clips, tmp_path / "mobile", [])
+    assert all(c["no_mirror"] for c in result["clips"])

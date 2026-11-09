@@ -10,10 +10,20 @@ class PetEngineTest {
         ClipSpec("walk", "move", 24.0, 24, stride = 120.0),
         ClipSpec("click", "click", 24.0, 12),
         ClipSpec("drag", "drag", 24.0, 24),
+        ClipSpec("nap", "random", 24.0, 120),
+        ClipSpec("balance", "events", 24.0, 48),
     )
     private fun engine() = PetEngine(clips, random = kotlin.random.Random(7)).apply {
         resize(300.0, 600.0)
         restorePosition(.5, .5)
+    }
+
+    @Test fun textBearingAnimationsKeepWritingReadableWhenFacingRight() {
+        val written = ClipSpec("written", "random", 24.0, 24, noMirror = true)
+        assertFalse(written.shouldMirror(true))
+        assertFalse(written.shouldMirror(false))
+        assertTrue(clips.first().shouldMirror(true))
+        assertFalse(clips.first().shouldMirror(false))
     }
 
     @Test fun clickPlaysOnceThenReturnsToIdle() {

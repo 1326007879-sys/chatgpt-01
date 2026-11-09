@@ -1,7 +1,7 @@
 package io.github.chatgpt01.petai.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import io.github.chatgpt01.petai.LocalizedActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import io.github.chatgpt01.petai.R
 
 /** Placeholder only: no discovery, file access, network calls or third-party code loading. */
-class PluginManagementActivity : ComponentActivity() {
+class PluginManagementActivity : LocalizedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

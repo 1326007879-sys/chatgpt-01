@@ -1,15 +1,11 @@
 package io.github.chatgpt01.petai.chat.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.content.Context
-import android.speech.RecognizerIntent
-import androidx.activity.result.contract.ActivityResultContracts
 import io.github.chatgpt01.petai.R
 import io.github.chatgpt01.petai.chat.voice.*
-import java.util.Locale
+import androidx.compose.ui.res.stringResource
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import io.github.chatgpt01.petai.LocalizedActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
@@ -50,46 +46,12 @@ internal class ChatRuntime(context: Context) {
 }
 
 /** Private page opened by explicit user actions from the app or pet menu. */
-class ChatActivity : ComponentActivity() {
+class ChatActivity : LocalizedActivity() {
     private lateinit var speech: SystemSpeechOutput
     private val voiceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val readTracker = ReplyReadTracker()
     private var boundConversation: ChatConversation? = null
     private var foreground by mutableStateOf(false)
-    private var voiceNotice by mutableStateOf<String?>(null)
-    private val recognition = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val recognized = runCatching {
-                result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull().orEmpty()
-            }.getOrDefault("")
-            if (recognized.isBlank()) voiceNotice = getString(R.string.voice_input_empty)
-            else voiceScope.launch {
-                try {
-                    val input = ChatRuntime.get(applicationContext).session().second
-                    val draft = VoiceText.appendDraft(input.state.value.draft, recognized)
-                    if (draft == null) voiceNotice = getString(R.string.voice_input_too_long)
-                    else { input.edit(draft); voiceNotice = getString(R.string.voice_input_review) }
-                } catch (e: CancellationException) { throw e }
-                catch (_: Exception) { voiceNotice = getString(R.string.voice_input_failed) }
-            }
-        }
-    }
-
-    private fun recognize() {
-        speech.stop()
-        voiceNotice = null
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-            .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            .putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.SIMPLIFIED_CHINESE.toLanguageTag())
-            .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
-            .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-            .putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_input_prompt))
-        try {
-            if (intent.resolveActivity(packageManager) == null) voiceNotice = getString(R.string.voice_input_missing)
-            else recognition.launch(intent)
-        } catch (_: RuntimeException) { voiceNotice = getString(R.string.voice_input_failed) }
-    }
-
     override fun onStart() {
         super.onStart()
         boundConversation?.let { readTracker.baseline(it.state.value.session.messages) }
@@ -124,9 +86,9 @@ class ChatActivity : ComponentActivity() {
                 }
                 val ready = session
                 if (ready == null) Column(Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp)) {
-                    Text(if (failed) "无法读取聊天历史，原文件已保留。可以重试读取。" else "正在读取聊天…")
-                    if (failed) Button(onClick = { attempt++ }) { Text("重试读取") }
-                    TextButton(onClick = { finish() }) { Text("返回") }
+                    Text(if (failed) stringResource(R.string.history_load_failed) else stringResource(R.string.history_loading))
+                    if (failed) Button(onClick = { attempt++ }) { Text(stringResource(R.string.history_retry)) }
+                    TextButton(onClick = { finish() }) { Text(stringResource(R.string.back)) }
                 } else {
                     val state by ready.first.state.collectAsState()
                     val input by ready.second.state.collectAsState()
@@ -147,12 +109,12 @@ class ChatActivity : ComponentActivity() {
                     if (voiceSettingsOpen) VoiceSettingsScreen(speechState, speech::autoRead, speech::select,
                         { speech.speak(getString(R.string.voice_sample)) }, speech::stop,
                         { speech.stop(); voiceSettingsOpen = false })
-                    else ChatScreen(state, input, { voiceNotice = null; ready.second.edit(it) },
-                        { speech.stop(); voiceNotice = null; ready.second.send() },
+                    else ChatScreen(state, input, { ready.second.edit(it) },
+                        { speech.stop(); ready.second.send() },
                         { speech.stop(); state.generation.requestId?.let(ready.first::stop) },
                         { speech.stop(); ready.second.retry(it) },
                         { speech.stop(); runtime.settingsUi.load(); settingsOpen = true }, { finish() },
-                        speechState, voiceNotice, ::recognize,
+                        speechState,
                         { speech.stop(); voiceSettingsOpen = true }, speech::speak, speech::stop)
                     if (settingsOpen) ModelSettingsDialog(runtime.settingsUi) { settingsOpen = false }
                 }

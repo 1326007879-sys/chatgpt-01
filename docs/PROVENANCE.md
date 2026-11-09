@@ -15,3 +15,7 @@ CLI 构建没有桌面 GUI 会话结束事件，终止进程由普通进程信�
 历史开发记录在 implementation/，记录旧路径、旧基线和当时的测试结果，仅供溯源；当前构建规则以 BUILD.md 为准。
 
 新应用身份为 io.github.chatgpt01.petai，版本0.1.0-preview.1/code1；Kotlin namespace亦独立重命名，不覆盖原应用或读写其私有数据。原版0.2.x到本项目不作覆盖升级；升级测试仅用于将来本项目同包名版本。
+
+## 2026-11-09 动画扩充
+
+从原作者 MerZlin/dsh-pet-indesktop 的相同溯源提交 34d810b1 导入缺少的89段random和6段events/balance源WebM。清单位于 tools/asset_pipeline/animation_catalog.json，逐项记录SHA256及分批归属。现有11段源素材保持字节一致；原素材许可及署名继续适用。

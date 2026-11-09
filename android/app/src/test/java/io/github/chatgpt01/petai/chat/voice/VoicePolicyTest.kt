@@ -8,14 +8,6 @@ class VoicePolicyTest {
     private fun reply(id: String, status: MessageStatus = MessageStatus.COMPLETED) =
         ChatMessage(id, MessageRole.ASSISTANT, if (status == MessageStatus.REQUESTING) "" else "你好", 1, status)
 
-    @Test fun dictationAppendsWithoutReplacingDraftAndNeverTruncatesSilently() {
-        assertEquals("原草稿\n识别文字", VoiceText.appendDraft("原草稿", " 识别文字 "))
-        assertEquals("识别文字", VoiceText.appendDraft(" ", "识别文字"))
-        assertNull(VoiceText.appendDraft("原草稿", "  "))
-        assertEquals(12000, VoiceText.appendDraft("", "字".repeat(12000))?.length)
-        assertNull(VoiceText.appendDraft("旧草稿", "字".repeat(12000)))
-    }
-
     @Test fun longSpeechChunksPreserveChineseEmojiAndInputExactly() {
         val text = "a😀中文\n".repeat(8000)
         for (limit in listOf(2, 3, 100, 4000)) {

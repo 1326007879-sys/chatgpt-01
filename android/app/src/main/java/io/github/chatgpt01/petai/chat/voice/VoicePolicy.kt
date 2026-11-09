@@ -6,13 +6,6 @@ import io.github.chatgpt01.petai.chat.MessageStatus
 
 /** These are generated assistant-visible words, never credentials or transport configuration. */
 object VoiceText {
-    fun appendDraft(draft: String, recognized: String, limit: Int = 12000): String? {
-        val text = recognized.trim()
-        if (text.isEmpty()) return null
-        val result = if (draft.isBlank()) text else "$draft\n$text"
-        return result.takeIf { it.length <= limit }
-    }
-
     /** Android TTS limits each utterance; never cut between UTF-16 surrogate pairs. */
     fun chunks(text: String, limit: Int): List<String> {
         require(limit >= 2)

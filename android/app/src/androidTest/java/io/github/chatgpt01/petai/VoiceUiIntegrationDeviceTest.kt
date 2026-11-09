@@ -1,5 +1,7 @@
 package io.github.chatgpt01.petai
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -32,6 +34,24 @@ class VoiceUiIntegrationDeviceTest {
         compose.onNodeWithText(text(R.string.voice_engine_missing)).assertExists()
     }
 
+    @Test fun keyboardInputRemainsEditableAndFocusingItStopsReading() {
+        var stopped = false
+        var draft = ""
+        compose.setContent {
+            ChatTheme {
+                var input by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
+                ChatScreen(ConversationState(ChatSession("main", "shenshen", emptyList())),
+                    ChatInputState(input), { input = it; draft = it }, {}, {}, {}, {}, {},
+                    onStopRead = { stopped = true })
+            }
+        }
+        compose.onNodeWithTag("chat_input").performClick().performTextInput("键盘语音结果")
+        compose.onNodeWithTag("chat_send").assertIsEnabled()
+        assertEquals("键盘语音结果", draft)
+        assertTrue(stopped)
+        compose.onNodeWithText("Dictate").assertDoesNotExist()
+    }
+
     @Test fun completedReplyCanBeReadWithoutReadingTheUserMessage() {
         var spoken = ""
         val messages = listOf(ChatMessage("u", MessageRole.USER, "我的问题", 1),
@@ -46,6 +66,31 @@ class VoiceUiIntegrationDeviceTest {
         compose.onAllNodesWithText(text(R.string.voice_read_reply)).assertCountEquals(1)
         compose.onNodeWithText(text(R.string.voice_read_reply)).performClick()
         assertEquals("桌宠回复", spoken)
+    }
+
+    @Test fun englishUiTranslatesNoticesButPreservesUserAndModelText() {
+        val app = InstrumentationRegistry.getInstrumentation().targetContext
+        val configuration = android.content.res.Configuration(app.resources.configuration).apply {
+            setLocale(java.util.Locale.ENGLISH)
+        }
+        val localized = app.createConfigurationContext(configuration)
+        val messages = listOf(ChatMessage("u", MessageRole.USER, "用户原文", 1),
+            ChatMessage("a", MessageRole.ASSISTANT, "模型原文", 2, MessageStatus.INTERRUPTED))
+        compose.setContent {
+            androidx.compose.runtime.CompositionLocalProvider(
+                androidx.compose.ui.platform.LocalContext provides localized,
+                androidx.compose.ui.platform.LocalConfiguration provides configuration) {
+                ChatTheme {
+                    ChatScreen(ConversationState(ChatSession("main", "shenshen", messages)),
+                        ChatInputState(), {}, {}, {}, {}, {}, {})
+                }
+            }
+        }
+        compose.onNodeWithText("Model settings").assertExists()
+        compose.onNodeWithText("Send").assertExists()
+        compose.onNodeWithText("Reply interrupted; you can retry").assertExists()
+        compose.onNodeWithText("用户原文").assertExists()
+        compose.onNodeWithText("模型原文").assertExists()
     }
 
     @Test fun voiceSettingsExposePreviewStopAndSelectionCallbacks() {

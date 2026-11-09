@@ -50,7 +50,7 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
         }
     }
 
-    private fun text(id: Int) = app.getString(id)
+    private fun text(id: Int) = io.github.chatgpt01.petai.AppLanguage.wrap(app).getString(id)
     private fun initialized(status: Int) {
         if (closed) return
         val engine = tts
