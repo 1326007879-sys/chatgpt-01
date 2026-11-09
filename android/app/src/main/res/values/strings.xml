@@ -68,4 +68,9 @@
     <string name="animation_numbered">%1$s %2$d</string>
     <string name="animation_import">导入新动画（暂未开放）</string>
     <string name="animation_import_pending">动画导入暂未开放，后续将支持自定义添加动画。</string>
+    <string name="plugins_title">插件管理</string>
+    <string name="plugins_back">返回主界面</string>
+    <string name="plugins_pending">暂未开放</string>
+    <string name="plugins_empty">当前版本暂不支持外置插件。</string>
+    <string name="plugins_scope">后续将在此提供插件接入与管理。当前不会搜索、安装或加载插件。</string>
 </resources>

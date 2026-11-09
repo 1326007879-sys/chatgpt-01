@@ -63,6 +63,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import io.github.chatgpt01.petai.ui.PluginManagementActivity
 import io.github.chatgpt01.petai.ui.AppearanceSection
 import io.github.chatgpt01.petai.ui.ClickSoundSection
 import io.github.chatgpt01.petai.ui.CollisionSection
@@ -208,6 +209,12 @@ class MainActivity : ComponentActivity() {
                         Text(stringResource(R.string.chat_open))
                     }
                     Text(stringResource(R.string.chat_open_hint), style = MaterialTheme.typography.bodySmall)
+                    OutlinedButton(onClick = {
+                        startActivity(Intent(this@MainActivity, PluginManagementActivity::class.java))
+                    }, modifier = Modifier.fillMaxWidth().testTag("open_plugins")) {
+                        Text(stringResource(R.string.plugins_title))
+                    }
+
                     HorizontalDivider()
                     SectionTitle(R.string.appearance)
                     AppearanceSection(options) { save(it) }
