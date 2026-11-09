@@ -648,6 +648,10 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
                 val pad = (12 * resources.displayMetrics.density).roundToInt()
                 setPadding(pad, pad, pad, pad)
             })
+            action(R.string.animation_import) {
+                android.widget.Toast.makeText(this, R.string.animation_import_pending,
+                    android.widget.Toast.LENGTH_LONG).show()
+            }
             surface.handle.engine.availableActions.forEachIndexed { index, clip ->
                 val label = clip.displayName.ifBlank {
                     val group = when (clip.group) {
