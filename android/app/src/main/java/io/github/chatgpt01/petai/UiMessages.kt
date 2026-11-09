@@ -6,6 +6,8 @@ import androidx.compose.ui.res.stringResource
 /** Translate known app notices, never model replies, user drafts or provider text. */
 object UiMessages {
     private val resources = mapOf(
+        "请等待素材处理完成，或先停止悬浮桌宠，再重试。" to R.string.packs_busy,
+        "Wait for the current operation or stop the overlay, then retry." to R.string.packs_busy,
         "请先允许显示在其他应用上层" to R.string.permission_required,
         "无法启动桌宠，请重新打开应用后重试" to R.string.start_failed,
         "动画资源无法读取，请重新安装此测试版" to R.string.assets_failed,

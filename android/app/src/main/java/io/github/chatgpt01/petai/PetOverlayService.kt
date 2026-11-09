@@ -130,6 +130,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
     private val surfaces = LinkedHashMap<Int, Surface>()
     private var motherScale = 1.0
     private var safe = Rect()
+    private var animationLease = false
     private var started = false
     private var registered = false
     private var userPaused = false
@@ -204,7 +205,12 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
                 getString(R.string.channel_name), NotificationManager.IMPORTANCE_LOW))
             val type = if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
             ServiceCompat.startForeground(this, 1, notification(), type)
-            catalog = AssetCatalog.load(assets)
+            val bundled = AssetCatalog.load(assets)
+            val installed = io.github.chatgpt01.petai.animation.AnimationPackStore(
+                java.io.File(noBackupFilesDir, "animations")).acquire()
+            animationLease = true
+            val combined = bundled.clips + installed
+            catalog = bundled.copy(clips = combined, unionCrop = WindowGeometry.union(combined))
             settings = preferences.options()
             safe = safeBounds()
             motherScale = scaleFor(settings.size)
@@ -232,7 +238,8 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
             updateVisibility()
         } catch (e: Exception) {
             Log.e(TAG, "Pet startup failed", e)
-            fail(if (e is SecurityException) R.string.permission_required else R.string.assets_failed)
+            fail(if (e is io.github.chatgpt01.petai.animation.PackFailure && e.reason == "busy") R.string.packs_busy
+                else if (e is SecurityException) R.string.permission_required else R.string.assets_failed)
         }
     }
 
@@ -668,8 +675,8 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
                 setPadding(pad, pad, pad, pad)
             })
             action(R.string.animation_import) {
-                android.widget.Toast.makeText(this, R.string.animation_import_pending,
-                    android.widget.Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, io.github.chatgpt01.petai.ui.AnimationManagementActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             var lastBatch = -1
             val english = AppLanguage.selected(this) == "en"
@@ -682,6 +689,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
                         text = getString(when (clip.batch) {
                             1 -> R.string.animation_batch_common
                             2 -> R.string.animation_batch_other
+                            4 -> R.string.packs_installed
                             3 -> R.string.animation_batch_balance
                             else -> R.string.animation_batch_core
                         })
@@ -857,6 +865,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         registry?.shutdown()
         registry = null
         removeWindows()
+        if (animationLease) { io.github.chatgpt01.petai.animation.AnimationPackStore.release(); animationLease = false }
         PetRuntime.state.value = RuntimeState(error = PetRuntime.state.value.error)
         stopForeground(STOP_FOREGROUND_REMOVE)
         super.onDestroy()

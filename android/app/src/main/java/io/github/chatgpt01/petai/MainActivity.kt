@@ -214,6 +214,11 @@ class MainActivity : LocalizedActivity() {
                         Text(stringResource(R.string.plugins_title))
                     }
 
+                    OutlinedButton(onClick = {
+                        startActivity(Intent(this@MainActivity, io.github.chatgpt01.petai.ui.AnimationManagementActivity::class.java))
+                    }, modifier = Modifier.fillMaxWidth().testTag("open_animation_management")) {
+                        Text(stringResource(R.string.packs_title))
+                    }
                     SectionTitle(R.string.app_language)
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         listOf("zh-CN" to R.string.language_zh, "en" to R.string.language_en).forEach { (tag, label) ->

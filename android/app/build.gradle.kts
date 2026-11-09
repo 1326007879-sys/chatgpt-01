@@ -34,7 +34,7 @@ android {
 val exportPetAssets by tasks.registering(Exec::class) {
     val repository = rootProject.projectDir.parentFile
     val python = providers.gradleProperty("petPython").orElse("python")
-    val animationBatch = providers.gradleProperty("petAnimationBatch").orElse("3")
+    val animationBatch = providers.gradleProperty("petAnimationBatch").orElse("0")
     require(animationBatch.get().toInt() in 0..3) { "petAnimationBatch must be 0, 1, 2 or 3" }
     inputs.property("animationBatch", animationBatch)
     inputs.dir(repository.resolve("assets/characters/shenshen/videos"))

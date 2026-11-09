@@ -66,8 +66,7 @@
     <string name="animation_drag">悬空</string>
     <string name="animation_action">动作</string>
     <string name="animation_numbered">%1$s %2$d</string>
-    <string name="animation_import">导入新动画（暂未开放）</string>
-    <string name="animation_import_pending">动画导入暂未开放，后续将支持自定义添加动画。</string>
+    <string name="animation_import">导入新动画</string>
     <string name="plugins_title">插件管理</string>
     <string name="plugins_back">返回主界面</string>
     <string name="plugins_pending">暂未开放</string>
@@ -159,4 +158,25 @@
     <string name="animation_batch_other">更多动作与节日动作</string>
     <string name="animation_batch_balance">余额主题（仅动画）</string>
     <string name="animation_picker_description">%1$s\n%2$s</string>
+    <string name="packs_title">动画管理</string>
+    <string name="packs_hint">选择手机里的 .petanim 动作包导入。请先停止悬浮桌宠再安装或删除，完成后重新启动即可在动作选择中使用。</string>
+    <string name="packs_core">当前内置 %1$d 个动作，内置动作不能删除。</string>
+    <string name="packs_stop">停止桌宠以管理素材</string>
+    <string name="packs_working">正在处理…</string>
+    <string name="packs_success">安装成功，启动桌宠后可在动作选择中播放。</string>
+    <string name="packs_installed">已安装的扩展动作</string>
+    <string name="packs_total">已安装 %1$d 个扩展动作，占用 %2$.1f MiB。</string>
+    <string name="packs_size">占用 %1$.1f MiB</string>
+    <string name="packs_version">素材版本：%1$d</string>
+    <string name="packs_delete">删除动作</string>
+    <string name="packs_delete_confirm">删除这个扩展动作并释放空间？原始下载文件不会被删除。</string>
+    <string name="packs_deleted">动作已删除。</string>
+    <string name="packs_broken">素材损坏，可删除后重新导入。</string>
+    <string name="packs_empty">尚未安装扩展动作。</string>
+    <string name="packs_busy">请等待素材处理完成，或先停止悬浮桌宠，再重试。</string>
+    <string name="packs_duplicate">该动作已安装。若要更换版本，请先删除旧动作再导入。</string>
+    <string name="packs_incompatible">此素材包格式、角色或画布版本不兼容。</string>
+    <string name="packs_large">素材包超过容量或文件数量限制。</string>
+    <string name="packs_storage">无法读取或写入素材。请检查文件访问权限和剩余空间后重试。</string>
+    <string name="packs_invalid">素材包不完整或校验失败，未安装。请选择兼容的 .petanim 动作包。</string>
 </resources>

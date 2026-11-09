@@ -22,6 +22,7 @@ data class ClipSpec(
     val englishName: String = "",
     val batch: Int = 0,
     val noMirror: Boolean = false,
+    val installedDirectory: java.io.File? = null,
 ) {
     val duration get() = frames / fps
     fun shouldMirror(facingRight: Boolean): Boolean = facingRight && !noMirror

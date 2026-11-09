@@ -165,7 +165,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--res-output", type=Path)
     parser.add_argument("--jobs", type=int, choices=range(1, 5), default=min(3, os.cpu_count() or 1))
-    parser.add_argument("--max-batch", type=int, choices=range(4), default=3,
+    parser.add_argument("--max-batch", type=int, choices=range(4), default=0,
                         help="0=core; 1=common; 2=all random; 3=all animations")
     args = parser.parse_args()
     sys.path.insert(0, str(ROOT))
