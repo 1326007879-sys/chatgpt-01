@@ -61,30 +61,24 @@ jobs:
                   if f.name!='SHA256SUMS.txt': out.write(hashlib.sha256(f.read_bytes()).hexdigest()+'  '+f.name+'\n')
           PY
           (cd publication && sha256sum -c SHA256SUMS.txt)
-      - name: Create or check draft
+      - name: Check authorized draft
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import subprocess,json,os
-          endpoint=f"repos/{os.environ['GH_REPO']}/releases/tags/{os.environ['TAG']}"
-          r=subprocess.run(['gh','api',endpoint],text=True,capture_output=True)
-          if r.returncode==0:
-              release=json.loads(r.stdout)
-              assert release['draft'] and release['prerelease'], 'Refuse to modify published release'
-              assert release['target_commitish']==os.environ['GITHUB_SHA'], 'Unexpected source commit'
-              assert not release['assets'], 'Refuse to overwrite existing assets'
-          elif 'HTTP 404' in r.stderr:
-              subprocess.run(['gh','release','create',os.environ['TAG'],'--repo',os.environ['GH_REPO'],'--target',os.environ['GITHUB_SHA'],'--draft','--prerelease','--title','AI 桌宠 v0.1.0-preview.2（六模块验收版）','--notes-file','docs/releases/v0.1.0-preview.2/RELEASE_NOTES.md'],check=True)
-          else:
-              raise SystemExit(r.stderr)
-          PY
+          gh api "repos/$GH_REPO/releases/438748673" > release.json
+          python - <<'PYCODE'
+          import json,os
+          r=json.load(open('release.json'))
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG']
+          assert r['target_commitish']==os.environ['GITHUB_SHA'], 'Unexpected source commit'
+          assert not r['assets'], 'Refuse to overwrite existing assets'
+          PYCODE
       - name: Upload, verify and publish preview
         shell: bash
         run: |
           set -euo pipefail
           gh release upload "$TAG" publication/* --repo "$GH_REPO"
-          gh api "repos/$GH_REPO/releases/tags/$TAG" > uploaded.json
+          gh api "repos/$GH_REPO/releases/438748673" > uploaded.json
           python - <<'PY'
           import json,pathlib,hashlib,os
           r=json.load(open('uploaded.json'))
