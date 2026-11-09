@@ -43,6 +43,11 @@
 
 验证进度与限制见 [本轮实施记录](docs/implementation/KEYBOARD-LANGUAGE-ANIMATIONS.md)。
 
+## 插件原型开发（尚未发布）
+
+开发分支增加独立APK插件管理、手动调用界面、本地便签和故障样例；已发布preview.3仍不包含这些功能。
+安装、协议、数据范围及验证状态见 [PLUGIN_PROTOCOL.md](docs/PLUGIN_PROTOCOL.md)。
+
 ## 下载与版本选择
 
 | 项目 | 当前发布内容 |

@@ -40,3 +40,7 @@ Python/Qt/ffmpeg 仅在构建机使用，APK 不包含它们。所有构建依�
 本版使用 `-PpetPreviewInstall=true`，包名为 `io.github.chatgpt01.petai.preview3`，启动器名称“AI 桌宠·预览3”，版本0.1.0-preview.3/code3。该参数在历史preview.2标签下对应旧包名；以各标签源码为准。
 
 本版与旧包并存，不要求卸载或自动迁移数据。仍为Debug签名，后续稳定签名及升级方案单独处理。默认动画批次0，仅内置11段；95个单动作包独立上传Release。
+
+## 插件原型
+
+独立模块plugin-notes和plugin-fault生成各自APK；共享协议/SDK只在构建时复用源码。构建与设备验证步骤见 [PLUGIN_PROTOCOL.md](PLUGIN_PROTOCOL.md)。

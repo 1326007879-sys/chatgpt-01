@@ -7,6 +7,7 @@ plugins {
 val previewInstall = providers.gradleProperty("petPreviewInstall").orNull == "true"
 
 android {
+    sourceSets["main"].java.srcDir(rootProject.file("plugin-protocol/src/main/kotlin"))
     namespace = "io.github.chatgpt01.petai"
     compileSdk = 36
     defaultConfig {
