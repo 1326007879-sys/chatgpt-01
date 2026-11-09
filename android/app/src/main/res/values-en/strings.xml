@@ -55,4 +55,15 @@
     <string name="chat_open">Chat with main pet</string>
     <string name="chat_open_hint">Chat without starting the overlay pet. Configure a model service before your first message.</string>
     <string name="chat_open_failed">Could not open chat. Please try again.</string>
+    <string name="animation_select">Choose action</string>
+    <string name="animation_picker_hint">Play a bundled action once in place, then return to idle. Resume first if paused. Taps, dragging and collisions can interrupt playback.</string>
+    <string name="animation_back">Back to menu</string>
+    <string name="animation_unavailable">Cannot play now. Resume the pet and finish dragging first.</string>
+    <string name="animation_idle">Idle</string>
+    <string name="animation_click">Interaction</string>
+    <string name="animation_move">Movement</string>
+    <string name="animation_turn">Turn</string>
+    <string name="animation_drag">Suspended</string>
+    <string name="animation_action">Action</string>
+    <string name="animation_numbered">%1$s %2$d</string>
 </resources>

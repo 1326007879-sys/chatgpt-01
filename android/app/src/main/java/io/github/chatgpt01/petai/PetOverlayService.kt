@@ -618,7 +618,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
 
     // ---- long-press menu ---------------------------------------------------
 
-    private fun showActions(petId: Int) {
+    private fun showActions(petId: Int, animationPicker: Boolean = false) {
         closeMenu()
         val surface = surfaces[petId] ?: return
         val panel = object : LinearLayout(this) {
@@ -634,25 +634,60 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
             setBackgroundColor(Color.WHITE)
             elevation = 6 * resources.displayMetrics.density
         }
-        fun action(label: Int, run: () -> Unit) {
+        fun namedAction(label: String, run: () -> Unit) {
             panel.addView(Button(this).apply {
-                setText(label)
+                text = label
                 setOnClickListener { closeMenu(); run() }
             })
         }
-        action(R.string.settings) {
-            startActivity(Intent(this, MainActivity::class.java).addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        fun action(label: Int, run: () -> Unit) = namedAction(getString(label), run)
+        if (animationPicker) {
+            panel.addView(TextView(this).apply {
+                text = getString(R.string.animation_picker_hint)
+                setTextColor(Color.DKGRAY)
+                val pad = (12 * resources.displayMetrics.density).roundToInt()
+                setPadding(pad, pad, pad, pad)
+            })
+            surface.handle.engine.availableActions.forEachIndexed { index, clip ->
+                val label = clip.displayName.ifBlank {
+                    val group = when (clip.group) {
+                        "idle" -> R.string.animation_idle
+                        "click" -> R.string.animation_click
+                        "move" -> R.string.animation_move
+                        "turn" -> R.string.animation_turn
+                        "drag" -> R.string.animation_drag
+                        else -> R.string.animation_action
+                    }
+                    getString(R.string.animation_numbered, getString(group), index + 1)
+                }
+                namedAction(label) {
+                    if (surface.handle.engine.playAction(clip.id)) {
+                        render(surface)
+                        scheduleFrame()
+                    } else {
+                        android.widget.Toast.makeText(this, R.string.animation_unavailable,
+                            android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            action(R.string.animation_back) { showActions(petId) }
+        } else {
+            action(R.string.settings) {
+                startActivity(Intent(this, MainActivity::class.java).addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }
+            action(R.string.chat_open) { ChatEntry.open(this) }
+            action(R.string.animation_select) { showActions(petId, animationPicker = true) }
+            action(if (userPaused) R.string.resume else R.string.pause) {
+                command(this, if (userPaused) RESUME else PAUSE)
+            }
+            registry?.menuItems(surface.handle)?.forEach { item ->
+                action(item.labelRes) { item.action() }
+            }
+            action(R.string.stop) { stopSelf() }
         }
-        action(R.string.chat_open) { ChatEntry.open(this) }
-        action(if (userPaused) R.string.resume else R.string.pause) {
-            command(this, if (userPaused) RESUME else PAUSE)
-        }
-        registry?.menuItems(surface.handle)?.forEach { item ->
-            action(item.labelRes) { item.action() }
-        }
-        action(R.string.stop) { stopSelf() }
-        val p = layout((160 * resources.displayMetrics.density).roundToInt(),
+        val p = layout(((if (animationPicker) 240 else 160) * resources.displayMetrics.density)
+            .roundToInt().coerceAtMost(safe.width()).coerceAtLeast(1),
             WindowManager.LayoutParams.WRAP_CONTENT)
         // A user-opened menu needs focus for Back and accessibility navigation.
         p.flags = p.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
