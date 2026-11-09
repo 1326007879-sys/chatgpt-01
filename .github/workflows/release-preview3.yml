@@ -1,0 +1,156 @@
+name: Publish Android preview 3
+on:
+  push:
+    branches: [feat/android-animation-packs]
+    paths: [.github/workflows/release-preview3.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-android-preview-3
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: 1326007879-sys/chatgpt-01
+      TAG: v0.1.0-preview.3
+      RELEASE_ID: '438922197'
+      SOURCE_SHA: 85ab1c7bcdfa89798666492af7554847cad898fa
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 85ab1c7bcdfa89798666492af7554847cad898fa
+          persist-credentials: false
+      - name: Verify authorized source and empty draft
+        run: |
+          test "$GITHUB_REPOSITORY" = "$GH_REPO"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          gh api "repos/$GH_REPO/releases/$RELEASE_ID" > draft.json
+          python - <<'PY'
+          import json,os
+          r=json.load(open('draft.json'))
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG']
+          assert r['target_commitish']==os.environ['SOURCE_SHA'] and not r['assets']
+          PY
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install SDK and build dependencies
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-36' 'build-tools;35.0.0'
+          python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - run: python -m ruff check scripts tools tests
+      - name: Build and check core APK
+        working-directory: android
+        run: bash gradlew testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest -PpetPreviewInstall=true -PpetAnimationBatch=0 -PpetPython="$(command -v python)" --console=plain
+      - name: Prepare all standalone action packs
+        run: |
+          python scripts/export_android_assets.py --max-batch 3 --output dist/pack-source
+          python scripts/build_animation_packs.py --assets dist/pack-source --output dist/action-packs
+      - name: Assemble publication and checksum manifest
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,json,shutil,subprocess,hashlib,zipfile,xml.etree.ElementTree as E
+          p=Path('publication');p.mkdir()
+          apk=p/'chatgpt01-petai-0.1.0-preview.3-debug.apk'
+          shutil.copyfile('android/app/build/outputs/apk/debug/app-debug.apk',apk)
+          with zipfile.ZipFile(apk) as z:
+              m=json.loads(z.read('assets/pet/manifest.json'))
+              assert len(m['clips'])==11 and sum(c['frames'] for c in m['clips'])==2651
+          reports=[E.parse(x).getroot() for x in Path('android/app/build/test-results/testDebugUnitTest').glob('TEST-*.xml')]
+          tests=sum(int(x.get('tests','0')) for x in reports)
+          assert tests==159 and not sum(int(x.get('failures','0'))+int(x.get('errors','0')) for x in reports)
+          index=json.loads(Path('dist/action-packs/index.json').read_text())
+          assert len(index)==95 and len({x['id'] for x in index})==95
+          for entry in index:
+              original=Path('dist/action-packs')/entry['file']
+              entry['file']=entry['id']+'.petanim'
+              os.link(original,p/entry['file'])
+              entry['url']=f"https://github.com/{os.environ['GH_REPO']}/releases/download/{os.environ['TAG']}/{entry['file']}"
+              with (p/entry['file']).open('rb') as f: assert hashlib.file_digest(f,'sha256').hexdigest()==entry['sha256']
+          (p/'animation-packs-index.json').write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n')
+          for name in ['INSTALL.md','KNOWN_ISSUES.md','ANIMATIONS.md']:
+              shutil.copyfile(Path('docs/releases/v0.1.0-preview.3')/name,p/name)
+          for name in ['LICENSE','THIRD_PARTY_NOTICES.md']:shutil.copyfile(name,p/name)
+          sdk=Path(os.environ['ANDROID_HOME'])/'build-tools/35.0.0'
+          with (p/'SIGNATURE.txt').open('w') as f:subprocess.run([str(sdk/'apksigner'),'verify','--verbose','--print-certs',str(apk)],stdout=f,check=True)
+          with (p/'APK-METADATA.txt').open('w') as f:subprocess.run([str(sdk/'aapt'),'dump','badging',str(apk)],stdout=f,check=True)
+          metadata=(p/'APK-METADATA.txt').read_text()
+          assert "name='io.github.chatgpt01.petai.preview3'" in metadata
+          assert "versionCode='3'" in metadata and "versionName='0.1.0-preview.3'" in metadata
+          with apk.open('rb') as f:apksha=hashlib.file_digest(f,'sha256').hexdigest()
+          source={'repository':os.environ['GH_REPO'],'commit':os.environ['SOURCE_SHA'],'publisher_commit':os.environ['GITHUB_SHA'],
+                  'tag':os.environ['TAG'],'application_id':'io.github.chatgpt01.petai.preview3','version_name':'0.1.0-preview.3','version_code':3,
+                  'build_parameters':{'petPreviewInstall':True,'petAnimationBatch':0},'apk':apk.name,'apk_bytes':apk.stat().st_size,'apk_sha256':apksha,
+                  'core_clips':11,'optional_packs':95,'optional_pack_format':'webp-frames-v1','checks':{'jvm':tests,'python':13,'lint':'passed','instrumentation_apk':'built, not device accepted'},
+                  'signing':'Ephemeral GitHub Actions Debug signing; independent preview3 installation',
+                  'device_acceptance':'Pending; previous software-emulator startup ANR unresolved',
+                  'run_url':f"https://github.com/{os.environ['GH_REPO']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"}
+          (p/'SOURCE.json').write_text(json.dumps(source,indent=2)+'\n')
+          expected={}
+          for f in sorted(p.iterdir()):
+              with f.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()
+              expected[f.name]={'bytes':f.stat().st_size,'sha256':digest}
+          (p/'SHA256SUMS.txt').write_text(''.join(v['sha256']+'  '+k+'\n' for k,v in expected.items()))
+          f=p/'SHA256SUMS.txt'
+          with f.open('rb') as stream:expected[f.name]={'bytes':f.stat().st_size,'sha256':hashlib.file_digest(stream,'sha256').hexdigest()}
+          assert len(expected)==106
+          Path('expected-assets.json').write_text(json.dumps(expected,indent=2))
+          PY
+          (cd publication && sha256sum -c SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview3-publication
+          path: |
+            publication/
+            expected-assets.json
+          compression-level: 0
+          retention-days: 7
+      - name: Upload attachments, verify server digests and publish
+        run: |
+          python - <<'PY'
+          import subprocess,json,os
+          from pathlib import Path
+          from concurrent.futures import ThreadPoolExecutor,as_completed
+          repo=os.environ['GH_REPO'];endpoint=f"repos/{repo}/releases/{os.environ['RELEASE_ID']}"
+          def api(path):return json.loads(subprocess.check_output(['gh','api',path],text=True))
+          r=api(endpoint)
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG'] and r['target_commitish']==os.environ['SOURCE_SHA'] and not r['assets']
+          expected=json.loads(Path('expected-assets.json').read_text())
+          def upload(name):
+              subprocess.run(['gh','release','upload',os.environ['TAG'],str(Path('publication')/name),'--repo',repo],check=True)
+              return name
+          with ThreadPoolExecutor(max_workers=2) as pool:
+              for i,f in enumerate(as_completed([pool.submit(upload,n) for n in expected]),1):
+                  name=f.result()
+                  if i%10==0 or i==len(expected):print(f'Uploaded {i}/{len(expected)}: {name}',flush=True)
+          assets={};page=1
+          while True:
+              entries=api(endpoint+f'/assets?per_page=100&page={page}')
+              assets.update({a['name']:a for a in entries})
+              if len(entries)<100:break
+              page+=1
+          assert set(assets)==set(expected)
+          for name,e in expected.items():
+              a=assets[name]
+              assert a['state']=='uploaded' and a['size']==e['bytes'] and a.get('digest')=='sha256:'+e['sha256'],name
+          ref=api(f'repos/{repo}/git/ref/tags/'+os.environ['TAG'])['object']
+          target=api(f'repos/{repo}/git/tags/'+ref['sha'])['object']['sha'] if ref['type']=='tag' else ref['sha']
+          assert target==os.environ['SOURCE_SHA']
+          patch={'tag_name':os.environ['TAG'],'target_commitish':os.environ['SOURCE_SHA'],'draft':False,'prerelease':True,'make_latest':'false'}
+          Path('publish.json').write_text(json.dumps(patch))
+          subprocess.run(['gh','api','--method','PATCH',endpoint,'--input','publish.json','--jq','{id,html_url,draft,prerelease,tag_name}'],check=True)
+          r=api(endpoint)
+          assert not r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG']
+          PY
