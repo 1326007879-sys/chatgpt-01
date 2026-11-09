@@ -241,7 +241,10 @@ class FrameLoader(
             options.inBitmap = inBitmap
             options.inMutable = true
         }
-        return assets.open(request.clip.framePath(request.index)).use { stream ->
+        val directory = request.clip.installedDirectory
+        val input = if (directory == null) assets.open(request.clip.framePath(request.index))
+            else java.io.File(directory, "frames/f_%04d.webp".format(java.util.Locale.ROOT, request.index + 1)).inputStream()
+        return input.use { stream ->
             BitmapFactory.decodeStream(BufferedInputStream(stream), null, options)
         }
     }

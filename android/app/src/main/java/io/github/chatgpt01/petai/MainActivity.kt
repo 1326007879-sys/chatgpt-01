@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.provider.Settings
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -63,6 +62,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import io.github.chatgpt01.petai.ui.PluginManagementActivity
 import io.github.chatgpt01.petai.ui.AppearanceSection
 import io.github.chatgpt01.petai.ui.ClickSoundSection
 import io.github.chatgpt01.petai.ui.CollisionSection
@@ -71,7 +71,7 @@ import io.github.chatgpt01.petai.ui.SectionTitle
 import io.github.chatgpt01.petai.ui.SpeechSection
 import io.github.chatgpt01.petai.ui.WanderSection
 
-class MainActivity : ComponentActivity() {
+class MainActivity : LocalizedActivity() {
     private lateinit var preferences: PetPreferences
     private var overlayAllowed by mutableStateOf(false)
     private var options by mutableStateOf(PetOptions())
@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity() {
                                 style = MaterialTheme.typography.bodyMedium)
                         }
                     }
-                    runtime.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                    runtime.error?.let { Text(UiMessages.text(it), color = MaterialTheme.colorScheme.error) }
                     if (!overlayAllowed) {
                         Text(stringResource(R.string.permission_required))
                         Button(onClick = {
@@ -208,6 +208,28 @@ class MainActivity : ComponentActivity() {
                         Text(stringResource(R.string.chat_open))
                     }
                     Text(stringResource(R.string.chat_open_hint), style = MaterialTheme.typography.bodySmall)
+                    OutlinedButton(onClick = {
+                        startActivity(Intent(this@MainActivity, PluginManagementActivity::class.java))
+                    }, modifier = Modifier.fillMaxWidth().testTag("open_plugins")) {
+                        Text(stringResource(R.string.plugins_title))
+                    }
+
+                    OutlinedButton(onClick = {
+                        startActivity(Intent(this@MainActivity, io.github.chatgpt01.petai.ui.AnimationManagementActivity::class.java))
+                    }, modifier = Modifier.fillMaxWidth().testTag("open_animation_management")) {
+                        Text(stringResource(R.string.packs_title))
+                    }
+                    SectionTitle(R.string.app_language)
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        listOf("zh-CN" to R.string.language_zh, "en" to R.string.language_en).forEach { (tag, label) ->
+                            OutlinedButton(onClick = {
+                                if (AppLanguage.save(context, tag)) recreate()
+                                else android.widget.Toast.makeText(context, R.string.language_save_failed,
+                                    android.widget.Toast.LENGTH_LONG).show()
+                            }, enabled = AppLanguage.selected(context) != tag,
+                                modifier = Modifier.testTag("language_$tag")) { Text(stringResource(label)) }
+                        }
+                    }
                     HorizontalDivider()
                     SectionTitle(R.string.appearance)
                     AppearanceSection(options) { save(it) }

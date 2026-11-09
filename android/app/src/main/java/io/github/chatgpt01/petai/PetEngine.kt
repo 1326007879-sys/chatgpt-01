@@ -7,7 +7,7 @@ import kotlin.math.min
 import kotlin.math.tanh
 import kotlin.random.Random
 
-enum class PetMode { IDLE, TURN, MOVE, CLICK, DRAG, THROWN }
+enum class PetMode { IDLE, TURN, MOVE, CLICK, DRAG, THROWN, MANUAL }
 
 data class ThrowStep(val x: Double, val y: Double, val vx: Double, val vy: Double, val bounced: Boolean)
 
@@ -35,7 +35,9 @@ object ThrowMath {
 
 /** The service owns the clock; this model has no threads, Android calls, or I/O. */
 class PetEngine(clips: List<ClipSpec>, private val random: Random = Random.Default) {
-    private val groups = clips.groupBy { it.group }
+    /** Snapshot of playable bundled clips; selection never accepts a path or external asset. */
+    val availableActions: List<ClipSpec> = clips.toList()
+    private val groups = availableActions.groupBy { it.group }
     var clip: ClipSpec = groups.getValue("idle").first()
         private set
     var mode = PetMode.IDLE
@@ -113,6 +115,15 @@ class PetEngine(clips: List<ClipSpec>, private val random: Random = Random.Defau
         vx = 0.0; vy = 0.0; pendingMove = null
         enter(PetMode.IDLE, pick("idle"))
     }
+    /** Play one bundled clip in place. Gestures/collisions keep their normal priority. */
+    fun playAction(id: String): Boolean {
+        if (paused || mode == PetMode.DRAG) return false
+        val selected = availableActions.firstOrNull { it.id == id } ?: return false
+        vx = 0.0; vy = 0.0; pendingMove = null
+        enter(PetMode.MANUAL, selected)
+        return true
+    }
+
     fun click() { vx = 0.0; vy = 0.0; pendingMove = null; enter(PetMode.CLICK, pick("click")) }
     fun beginDrag() { vx = 0.0; vy = 0.0; pendingMove = null; enter(PetMode.DRAG, pick("drag")) }
     fun cancelDrag() { if (mode == PetMode.DRAG) idle() }
@@ -159,6 +170,7 @@ class PetEngine(clips: List<ClipSpec>, private val random: Random = Random.Defau
                 x = (moveStart + (moveTarget - moveStart) * progress).coerceIn(0.0, right)
                 if (elapsed >= clip.duration) idle()
             }
+            PetMode.MANUAL -> if (elapsed >= clip.duration) idle()
             PetMode.CLICK -> if (elapsed >= clip.duration) idle()
             PetMode.TURN -> if (elapsed >= clip.duration) {
                 val next = pendingMove

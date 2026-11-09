@@ -10,10 +10,20 @@ class PetEngineTest {
         ClipSpec("walk", "move", 24.0, 24, stride = 120.0),
         ClipSpec("click", "click", 24.0, 12),
         ClipSpec("drag", "drag", 24.0, 24),
+        ClipSpec("nap", "random", 24.0, 120),
+        ClipSpec("balance", "events", 24.0, 48),
     )
     private fun engine() = PetEngine(clips, random = kotlin.random.Random(7)).apply {
         resize(300.0, 600.0)
         restorePosition(.5, .5)
+    }
+
+    @Test fun textBearingAnimationsKeepWritingReadableWhenFacingRight() {
+        val written = ClipSpec("written", "random", 24.0, 24, noMirror = true)
+        assertFalse(written.shouldMirror(true))
+        assertFalse(written.shouldMirror(false))
+        assertTrue(clips.first().shouldMirror(true))
+        assertFalse(clips.first().shouldMirror(false))
     }
 
     @Test fun clickPlaysOnceThenReturnsToIdle() {
@@ -87,5 +97,94 @@ class PetEngineTest {
         assertEquals(106.4, result.x, .0001)
         assertEquals(195.5584, result.y, .0001)
         assertEquals(-277.6, result.vy, .0001)
+    }
+
+    @Test fun everyBundledActionPlaysOnceInPlaceThenIdles() {
+        for (clip in clips) {
+            val e = engine()
+            val x = e.x; val y = e.y
+            assertTrue(e.playAction(clip.id))
+            assertEquals(clip, e.clip)
+            assertEquals(PetMode.MANUAL, e.mode)
+            assertEquals(0, e.frameIndex)
+            repeat((clip.duration / .05).toInt() - 1) { e.advance(.05) }
+            assertEquals(PetMode.MANUAL, e.mode)
+            assertEquals(x, e.x, 0.0)
+            assertEquals(y, e.y, 0.0)
+            repeat(3) { e.advance(.05) }
+            assertEquals(PetMode.IDLE, e.mode)
+            assertEquals("idle", e.clip.group)
+        }
+    }
+
+    @Test fun manualSelectionStopsThrowAndDoesNotLeakVelocityOrPendingWalk() {
+        val e = engine()
+        e.beginDrag(); e.release(1200.0, -800.0)
+        assertTrue(e.playAction("walk"))
+        val x = e.x; val y = e.y
+        assertEquals(0.0, e.vx, 0.0)
+        assertEquals(0.0, e.vy, 0.0)
+        repeat(10) { e.advance(.05) }
+        assertEquals(x, e.x, 0.0)
+        assertEquals(y, e.y, 0.0)
+        e.stopWandering()
+        assertEquals(PetMode.MANUAL, e.mode)
+        repeat(20) { e.advance(.05) }
+        assertEquals(PetMode.IDLE, e.mode)
+    }
+
+    @Test fun repeatedSelectionRestartsAndDifferentSelectionReplacesIt() {
+        val e = engine()
+        e.playAction("walk")
+        repeat(4) { e.advance(.05) }
+        assertTrue(e.frameIndex > 0)
+        assertTrue(e.playAction("walk"))
+        assertEquals(0, e.frameIndex)
+        assertTrue(e.playAction("click"))
+        assertEquals("click", e.clip.id)
+        assertEquals(0, e.frameIndex)
+    }
+
+    @Test fun invalidPausedAndDraggingSelectionsPreserveState() {
+        val e = engine()
+        e.playAction("walk"); e.advance(.05)
+        val index = e.frameIndex
+        assertFalse(e.playAction("not-installed"))
+        assertEquals("walk", e.clip.id)
+        assertEquals(index, e.frameIndex)
+        e.paused = true
+        assertFalse(e.playAction("click"))
+        e.advance(30.0)
+        assertEquals(index, e.frameIndex)
+        e.paused = false
+        e.advance(.05)
+        assertTrue(e.frameIndex > index)
+        e.beginDrag()
+        assertFalse(e.playAction("click"))
+        assertEquals(PetMode.DRAG, e.mode)
+    }
+
+    @Test fun gesturesAndCollisionsInterruptManualActionWithoutLaterResumingIt() {
+        val e = engine()
+        e.playAction("walk"); e.click()
+        assertEquals(PetMode.CLICK, e.mode)
+        repeat(12) { e.advance(.05) }
+        assertEquals(PetMode.IDLE, e.mode)
+        e.playAction("click"); e.beginDrag()
+        assertEquals(PetMode.DRAG, e.mode)
+        e.release(0.0, 0.0)
+        assertEquals(PetMode.IDLE, e.mode)
+        e.playAction("walk"); e.nudge(0.0, 0.0, 900.0, -800.0)
+        assertEquals(PetMode.THROWN, e.mode)
+        e.wander = false
+        repeat(1500) { e.advance(.05) }
+        assertEquals(PetMode.IDLE, e.mode)
+    }
+
+    @Test fun manualActionBelongsOnlyToTheSelectedPet() {
+        val mother = engine(); val companion = engine()
+        assertTrue(companion.playAction("click"))
+        assertEquals(PetMode.IDLE, mother.mode)
+        assertEquals(PetMode.MANUAL, companion.mode)
     }
 }

@@ -1,4 +1,4 @@
-"""Export the desktop core clips as an offline Android asset package.
+"""Export staged character animations as an offline Android asset package.
 
 The desktop converter remains the only WebM/alpha decoder. This exporter copies
 its prepared WebP frames and derives the mobile catalog, never edits source art.
@@ -6,6 +6,9 @@ its prepared WebP frames and derives the mobile catalog, never edits source art.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
+import os
 import hashlib
 import json
 import math
@@ -17,6 +20,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
+BUNDLED_GROUPS = frozenset(("idle", "move", "turn", "click", "drag", "random", "events"))
 CORE_GROUPS = frozenset(("idle", "move", "turn", "click", "drag"))
 CLICK_SOUND_SOURCES = {"click_press.mp3": "Ya1.mp3", "click_release.mp3": "Ya2.mp3"}
 #: Assets shipped with the APK as license/notice files. The click sounds below are
@@ -61,18 +65,22 @@ def export_prepared(videos: Path, prepared: dict[Path, Path], output: Path,
     videos, output = videos.resolve(), output.resolve()
     if output == videos or videos in output.parents or output in videos.parents:
         raise ValueError("output overlaps the source package")
-    groups = {source.parent.name for source in prepared}
+    groups = {source.resolve().relative_to(videos).parts[0] for source in prepared}
     if not CORE_GROUPS <= groups:
         raise ValueError(f"missing required actions: {sorted(CORE_GROUPS - groups)}")
     geometry = json.loads((videos / "manifest.json").read_text(encoding="utf-8"))
+    text_file = videos / "text_clips.json"
+    no_mirror = set(json.loads(text_file.read_text(encoding="utf-8")).get("no_mirror", [])) if text_file.exists() else set()
     strides_file = videos / "move_strides.json"
     strides = json.loads(strides_file.read_text(encoding="utf-8")) if strides_file.exists() else {}
+    catalog = json.loads((ROOT / "tools/asset_pipeline/animation_catalog.json").read_text(encoding="utf-8"))
+    labels = {c["source"]: c for c in catalog["clips"]}
     clips = []
     canvas = None
     for source, directory in sorted(prepared.items(), key=lambda pair: pair[0].as_posix()):
         relative = source.resolve().relative_to(videos).as_posix()
         group = relative.split("/")[0]
-        if group not in CORE_GROUPS:
+        if group not in BUNDLED_GROUPS:
             continue
         meta = json.loads((directory / "meta.json").read_text(encoding="utf-8"))
         count, fps = int(meta["frames"]), float(meta["fps"])
@@ -103,7 +111,9 @@ def export_prepared(videos: Path, prepared: dict[Path, Path], output: Path,
         if isinstance(movement, (int, float)):
             movement = {"stride": movement}
         clips.append({"id": identity, "group": group, "source": relative,
-                      "name": source.stem, "fps": fps, "frames": count,
+                      "name": source.stem, "name_en": labels.get(relative, {}).get("name_en", source.stem),
+                      "batch": labels.get(relative, {}).get("batch", 0), "no_mirror": source.stem in no_mirror,
+                      "fps": fps, "frames": count,
                       "path": f"clips/{identity}", "crop_box": crop,
                       "stride": float(movement.get("stride", 180)),
                       "curve": movement.get("curve", []),
@@ -116,6 +126,12 @@ def export_prepared(videos: Path, prepared: dict[Path, Path], output: Path,
         raise ValueError("invalid body_box")
     pet_dir = output / "pet"
     pet_dir.mkdir(parents=True, exist_ok=True)
+    expected = {clip["id"] for clip in clips}
+    clips_root = pet_dir / "clips"
+    if clips_root.is_dir():
+        for old in clips_root.iterdir():
+            if old.is_dir() and old.name not in expected:
+                shutil.rmtree(old)
     for clip in clips:
         directory = clip.pop("_directory")
         target = pet_dir / clip["path"]
@@ -132,25 +148,51 @@ def export_prepared(videos: Path, prepared: dict[Path, Path], output: Path,
     return manifest
 
 
+def prepare_source(job: tuple[Path, Path]) -> tuple[Path, Path]:
+    """Each worker owns a distinct source/cache directory; never share a clip writer."""
+    from tools.asset_pipeline.frameseq import clip_out_dir, convert_clip
+
+    source, videos = job
+    directory = clip_out_dir(source, videos, videos.parent / "frameseq")
+    _, error = convert_clip(source, directory)
+    if error:
+        raise RuntimeError(f"{source.name}: {error}")
+    return source, directory
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--res-output", type=Path)
+    parser.add_argument("--jobs", type=int, choices=range(1, 5), default=min(3, os.cpu_count() or 1))
+    parser.add_argument("--max-batch", type=int, choices=range(4), default=0,
+                        help="0=core; 1=common; 2=all random; 3=all animations")
     args = parser.parse_args()
     sys.path.insert(0, str(ROOT))
     DEFAULT_SELF_TALK_TEXTS = json.loads((ROOT / "tools/asset_pipeline/default_phrases.json").read_text(encoding="utf-8"))
-    from tools.asset_pipeline.frameseq import clip_out_dir, convert_clip, hot_webms
+    from tools.asset_pipeline.frameseq import hot_webms
     from tools.asset_pipeline.icons import prepare_icon_image
 
     started = time.perf_counter()
     videos = ROOT / "assets/characters/shenshen/videos"
-    prepared = {}
-    for source in hot_webms(videos):
-        directory = clip_out_dir(source, videos, videos.parent / "frameseq")
-        _, error = convert_clip(source, directory)
-        if error:
-            raise RuntimeError(f"{source.name}: {error}")
-        prepared[source] = directory
+    sources = []
+    catalog = json.loads((ROOT / "tools/asset_pipeline/animation_catalog.json").read_text(encoding="utf-8"))
+    entries = {c["source"]: c for c in catalog["clips"]}
+    expected = {name for name, record in entries.items() if record["batch"] <= args.max_batch}
+    available = hot_webms(videos, BUNDLED_GROUPS)
+    present = {source.relative_to(videos).as_posix() for source in available}
+    if missing := expected - present:
+        raise ValueError(f"missing catalog sources: {sorted(missing)}")
+    for source in available:
+        relative = source.relative_to(videos).as_posix()
+        record = entries[relative]
+        if record["batch"] > args.max_batch:
+            continue
+        if hashlib.sha256(source.read_bytes()).hexdigest() != record["sha256"]:
+            raise ValueError(f"source identity mismatch: {relative}")
+        sources.append(source)
+    with ProcessPoolExecutor(max_workers=args.jobs, mp_context=multiprocessing.get_context("spawn")) as pool:
+        prepared = dict(pool.map(prepare_source, ((source, videos) for source in sources)))
     manifest = export_prepared(videos, prepared, args.output, DEFAULT_SELF_TALK_TEXTS)
     copy_notices(args.output)
     if args.res_output:

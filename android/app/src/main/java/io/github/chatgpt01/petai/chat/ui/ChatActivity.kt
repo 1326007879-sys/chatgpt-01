@@ -1,8 +1,11 @@
 package io.github.chatgpt01.petai.chat.ui
 
 import android.content.Context
+import io.github.chatgpt01.petai.R
+import io.github.chatgpt01.petai.chat.voice.*
+import androidx.compose.ui.res.stringResource
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import io.github.chatgpt01.petai.LocalizedActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
@@ -43,10 +46,32 @@ internal class ChatRuntime(context: Context) {
 }
 
 /** Private page opened by explicit user actions from the app or pet menu. */
-class ChatActivity : ComponentActivity() {
+class ChatActivity : LocalizedActivity() {
+    private lateinit var speech: SystemSpeechOutput
+    private val voiceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val readTracker = ReplyReadTracker()
+    private var boundConversation: ChatConversation? = null
+    private var foreground by mutableStateOf(false)
+    override fun onStart() {
+        super.onStart()
+        boundConversation?.let { readTracker.baseline(it.state.value.session.messages) }
+        foreground = true
+    }
+    override fun onStop() {
+        foreground = false
+        if (::speech.isInitialized) speech.stop()
+        super.onStop()
+    }
+    override fun onDestroy() {
+        voiceScope.cancel()
+        if (::speech.isInitialized) speech.close()
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        speech = SystemSpeechOutput(applicationContext)
         val runtime = ChatRuntime.get(applicationContext)
         setContent {
             ChatTheme {
@@ -61,16 +86,36 @@ class ChatActivity : ComponentActivity() {
                 }
                 val ready = session
                 if (ready == null) Column(Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp)) {
-                    Text(if (failed) "无法读取聊天历史，原文件已保留。可以重试读取。" else "正在读取聊天…")
-                    if (failed) Button(onClick = { attempt++ }) { Text("重试读取") }
-                    TextButton(onClick = { finish() }) { Text("返回") }
+                    Text(if (failed) stringResource(R.string.history_load_failed) else stringResource(R.string.history_loading))
+                    if (failed) Button(onClick = { attempt++ }) { Text(stringResource(R.string.history_retry)) }
+                    TextButton(onClick = { finish() }) { Text(stringResource(R.string.back)) }
                 } else {
                     val state by ready.first.state.collectAsState()
                     val input by ready.second.state.collectAsState()
                     var settingsOpen by remember { mutableStateOf(false) }
-                    ChatScreen(state, input, ready.second::edit, { ready.second.send() },
-                        { state.generation.requestId?.let(ready.first::stop) }, { ready.second.retry(it) },
-                        { runtime.settingsUi.load(); settingsOpen = true }, { finish() })
+                    var voiceSettingsOpen by remember { mutableStateOf(false) }
+                    val speechState by speech.state.collectAsState()
+                    SideEffect { boundConversation = ready.first }
+                    LaunchedEffect(ready.first) {
+                        readTracker.baseline(ready.first.state.value.session.messages)
+                        ready.first.state.collect { snapshot ->
+                            // Streaming snapshots cannot be read; avoid scanning history on every token.
+                            if (!snapshot.generation.isRunning) {
+                                readTracker.observe(snapshot.session.messages, speech.state.value.autoRead,
+                                    foreground && !settingsOpen && !voiceSettingsOpen)?.let { speech.speak(it.content) }
+                            }
+                        }
+                    }
+                    if (voiceSettingsOpen) VoiceSettingsScreen(speechState, speech::autoRead, speech::select,
+                        { speech.speak(getString(R.string.voice_sample)) }, speech::stop,
+                        { speech.stop(); voiceSettingsOpen = false })
+                    else ChatScreen(state, input, { ready.second.edit(it) },
+                        { speech.stop(); ready.second.send() },
+                        { speech.stop(); state.generation.requestId?.let(ready.first::stop) },
+                        { speech.stop(); ready.second.retry(it) },
+                        { speech.stop(); runtime.settingsUi.load(); settingsOpen = true }, { finish() },
+                        speechState,
+                        { speech.stop(); voiceSettingsOpen = true }, speech::speak, speech::stop)
                     if (settingsOpen) ModelSettingsDialog(runtime.settingsUi) { settingsOpen = false }
                 }
             }

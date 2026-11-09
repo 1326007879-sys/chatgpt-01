@@ -130,6 +130,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
     private val surfaces = LinkedHashMap<Int, Surface>()
     private var motherScale = 1.0
     private var safe = Rect()
+    private var animationLease = false
     private var started = false
     private var registered = false
     private var userPaused = false
@@ -153,10 +154,28 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         override fun onReceive(context: Context, intent: Intent) { updateVisibility() }
     }
 
+    // Resolve overlay menus and notifications against the current app language.
+    private var localizedResources: android.content.res.Resources? = null
+    override fun getResources(): android.content.res.Resources = localizedResources
+        ?: AppLanguage.wrap(baseContext).resources.also { localizedResources = it }
+    private val languageListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        handler.post {
+            localizedResources = null
+            closeMenu()
+            if (started) {
+                getSystemService(NotificationManager::class.java).createNotificationChannel(
+                    NotificationChannel(CHANNEL, getString(R.string.channel_name), NotificationManager.IMPORTANCE_LOW))
+                surfaces.values.forEach { it.view?.contentDescription = getString(R.string.app_name) }
+                updateNotification()
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         windows = getSystemService(WindowManager::class.java)
         preferences = PetPreferences(this)
+        getSharedPreferences(AppLanguage.STORE, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(languageListener)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -186,7 +205,12 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
                 getString(R.string.channel_name), NotificationManager.IMPORTANCE_LOW))
             val type = if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
             ServiceCompat.startForeground(this, 1, notification(), type)
-            catalog = AssetCatalog.load(assets)
+            val bundled = AssetCatalog.load(assets)
+            val installed = io.github.chatgpt01.petai.animation.AnimationPackStore(
+                java.io.File(noBackupFilesDir, "animations")).acquire()
+            animationLease = true
+            val combined = bundled.clips + installed
+            catalog = bundled.copy(clips = combined, unionCrop = WindowGeometry.union(combined))
             settings = preferences.options()
             safe = safeBounds()
             motherScale = scaleFor(settings.size)
@@ -214,7 +238,8 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
             updateVisibility()
         } catch (e: Exception) {
             Log.e(TAG, "Pet startup failed", e)
-            fail(if (e is SecurityException) R.string.permission_required else R.string.assets_failed)
+            fail(if (e is io.github.chatgpt01.petai.animation.PackFailure && e.reason == "busy") R.string.packs_busy
+                else if (e is SecurityException) R.string.permission_required else R.string.assets_failed)
         }
     }
 
@@ -586,7 +611,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         }
         val frame = surface.cursor?.request(clip, engine.frameIndex)
         if (frame == null) PetRuntime.staleFrames.incrementAndGet()
-        view.present(frame, clip.crop, engine.facingRight)
+        view.present(frame, clip.crop, clip.shouldMirror(engine.facingRight))
         positionBubble(surface)
     }
 
@@ -618,7 +643,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
 
     // ---- long-press menu ---------------------------------------------------
 
-    private fun showActions(petId: Int) {
+    private fun showActions(petId: Int, animationPicker: Boolean = false) {
         closeMenu()
         val surface = surfaces[petId] ?: return
         val panel = object : LinearLayout(this) {
@@ -634,25 +659,85 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
             setBackgroundColor(Color.WHITE)
             elevation = 6 * resources.displayMetrics.density
         }
-        fun action(label: Int, run: () -> Unit) {
+        fun namedAction(label: String, run: () -> Unit) {
             panel.addView(Button(this).apply {
-                setText(label)
+                text = label
                 setOnClickListener { closeMenu(); run() }
             })
         }
-        action(R.string.settings) {
-            startActivity(Intent(this, MainActivity::class.java).addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        fun action(label: Int, run: () -> Unit) = namedAction(getString(label), run)
+        if (animationPicker) {
+            panel.addView(TextView(this).apply {
+                text = getString(R.string.animation_picker_description, getString(R.string.animation_picker_hint),
+                    getString(R.string.animation_count, surface.handle.engine.availableActions.size))
+                setTextColor(Color.DKGRAY)
+                val pad = (12 * resources.displayMetrics.density).roundToInt()
+                setPadding(pad, pad, pad, pad)
+            })
+            action(R.string.animation_import) {
+                startActivity(Intent(this, io.github.chatgpt01.petai.ui.AnimationManagementActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+            var lastBatch = -1
+            val english = AppLanguage.selected(this) == "en"
+            val sortedActions = surface.handle.engine.availableActions.sortedWith(
+                compareBy({ it.batch }, { it.group }, { it.displayName }))
+            sortedActions.forEachIndexed { index, clip ->
+                if (clip.batch != lastBatch) {
+                    lastBatch = clip.batch
+                    panel.addView(TextView(this).apply {
+                        text = getString(when (clip.batch) {
+                            1 -> R.string.animation_batch_common
+                            2 -> R.string.animation_batch_other
+                            4 -> R.string.packs_installed
+                            3 -> R.string.animation_batch_balance
+                            else -> R.string.animation_batch_core
+                        })
+                        setTextColor(Color.DKGRAY)
+                        val pad = (12 * resources.displayMetrics.density).roundToInt()
+                        setPadding(pad, pad, pad, pad)
+                    })
+                }
+                val localizedName = if (english) clip.englishName else clip.displayName
+                val label = localizedName.ifBlank {
+                    val group = when (clip.group) {
+                        "idle" -> R.string.animation_idle
+                        "click" -> R.string.animation_click
+                        "move" -> R.string.animation_move
+                        "turn" -> R.string.animation_turn
+                        "drag" -> R.string.animation_drag
+                        else -> R.string.animation_action
+                    }
+                    getString(R.string.animation_numbered, getString(group), index + 1)
+                }
+                namedAction(label) {
+                    if (surface.handle.engine.playAction(clip.id)) {
+                        render(surface)
+                        scheduleFrame()
+                    } else {
+                        android.widget.Toast.makeText(this, R.string.animation_unavailable,
+                            android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            action(R.string.animation_back) { showActions(petId) }
+        } else {
+            action(R.string.settings) {
+                startActivity(Intent(this, MainActivity::class.java).addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }
+            action(R.string.chat_open) { ChatEntry.open(this) }
+            action(R.string.animation_select) { showActions(petId, animationPicker = true) }
+            action(if (userPaused) R.string.resume else R.string.pause) {
+                command(this, if (userPaused) RESUME else PAUSE)
+            }
+            registry?.menuItems(surface.handle)?.forEach { item ->
+                action(item.labelRes) { item.action() }
+            }
+            action(R.string.stop) { stopSelf() }
         }
-        action(R.string.chat_open) { ChatEntry.open(this) }
-        action(if (userPaused) R.string.resume else R.string.pause) {
-            command(this, if (userPaused) RESUME else PAUSE)
-        }
-        registry?.menuItems(surface.handle)?.forEach { item ->
-            action(item.labelRes) { item.action() }
-        }
-        action(R.string.stop) { stopSelf() }
-        val p = layout((160 * resources.displayMetrics.density).roundToInt(),
+        val p = layout(((if (animationPicker) 240 else 160) * resources.displayMetrics.density)
+            .roundToInt().coerceAtMost(safe.width()).coerceAtLeast(1),
             WindowManager.LayoutParams.WRAP_CONTENT)
         // A user-opened menu needs focus for Back and accessibility navigation.
         p.flags = p.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
@@ -761,6 +846,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        localizedResources = null
         super.onConfigurationChanged(newConfig)
         if (started) { reloadOptions(); rememberPositions() }
     }
@@ -771,6 +857,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         Choreographer.getInstance().removeFrameCallback(this)
         handler.removeCallbacksAndMessages(null)
         preferences.unsubscribe(preferenceListener)
+        getSharedPreferences(AppLanguage.STORE, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(languageListener)
         if (registered) {
             unregisterReceiver(screenReceiver)
             getSystemService(AppOpsManager::class.java).stopWatchingMode(permissionListener)
@@ -778,6 +865,7 @@ class PetOverlayService : Service(), Choreographer.FrameCallback, ModuleHost, Pe
         registry?.shutdown()
         registry = null
         removeWindows()
+        if (animationLease) { io.github.chatgpt01.petai.animation.AnimationPackStore.release(); animationLease = false }
         PetRuntime.state.value = RuntimeState(error = PetRuntime.state.value.error)
         stopForeground(STOP_FOREGROUND_REMOVE)
         super.onDestroy()

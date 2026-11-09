@@ -11,3 +11,5 @@ Use this checkout; cloud tasks are already isolated. Do not create extra worktre
 - Keep existing HTTP TLS verification, per-service credential isolation, cancellable requests, atomic history writes and storage error visibility.
 - Work in feature branches; main is the project baseline. PR review precedes merge. Do not publish releases or cloud environments unless requested.
 - Existing cloud platform settings live outside Git and must not be replaced merely by editing project metadata.
+
+- Before planning an update or publishing a new version, read docs/NEXT_UPDATE.md and remind the user of pending requirements before choosing the update scope.
