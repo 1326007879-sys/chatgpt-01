@@ -1,5 +1,7 @@
 # Android AI 桌宠
 
+**最新测试预览： [v0.1.0-preview.4](https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.4)**。包含插件原型、便签及故障样例，设备端到端验收未完成。请按 [新版安装步骤](docs/releases/v0.1.0-preview.4/INSTALL.md) 下载测试；下面的preview.3资料保留供旧版使用。
+
 <p align="center">
   <a href="https://github.com/1326007879-sys/chatgpt-01/releases/tag/v0.1.0-preview.3"><img alt="独立动作包预览版" src="https://img.shields.io/badge/版本-v0.1.0--preview.3-blue"></a>
   <img alt="Android 8.0 及以上" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84">
