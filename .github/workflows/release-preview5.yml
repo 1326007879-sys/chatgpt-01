@@ -1,0 +1,92 @@
+name: Publish reminders preview 5
+on:
+  push:
+    branches: [feat/reminders-animation-update]
+    paths: [.github/workflows/release-preview5.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-reminders-preview-5
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: 1326007879-sys/chatgpt-01
+      TAG: v0.1.0-preview.5
+      RELEASE_ID: '441965503'
+      SOURCE_SHA: 9c922eacbda34dcb8d68e2c9ad0694473cd96707
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 9c922eacbda34dcb8d68e2c9ad0694473cd96707
+          persist-credentials: false
+      - name: Verify repository and authorized draft
+        run: |
+          test "$GITHUB_REPOSITORY" = "$GH_REPO"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          gh api "repos/$GH_REPO/releases/$RELEASE_ID" > draft.json
+          python - <<'PY'
+          import json,os
+          r=json.load(open('draft.json'))
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG']
+          assert r['target_commitish']==os.environ['SOURCE_SHA'] and not r['assets']
+          PY
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install build dependencies
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-36' 'build-tools;35.0.0'
+          python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - run: python -m ruff check scripts tools tests
+      - name: Check host and independent plugins
+        working-directory: android
+        run: bash gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest :plugin-notes:testDebugUnitTest :plugin-notes:lintDebug :plugin-notes:assembleDebug :plugin-fault:lintDebug :plugin-fault:assembleDebug -PpetPreviewInstall=true -PpetAnimationBatch=0 -PpetPython="$(command -v python)" --console=plain
+      - name: Prepare and verify release assets
+        run: |
+          python scripts/prepare_preview5_release.py
+          (cd dist/preview5-publication && sha256sum -c SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview5-publication
+          path: |
+            dist/preview5-publication/
+            dist/preview5-expected.json
+          compression-level: 0
+          retention-days: 7
+      - name: Upload and publish verified preview
+        run: |
+          python - <<'PY'
+          import os,json,subprocess
+          from pathlib import Path
+          from concurrent.futures import ThreadPoolExecutor
+          repo=os.environ['GH_REPO'];endpoint=f"repos/{repo}/releases/{os.environ['RELEASE_ID']}"
+          def api(path):return json.loads(subprocess.check_output(['gh','api',path],text=True))
+          r=api(endpoint)
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG'] and r['target_commitish']==os.environ['SOURCE_SHA'] and not r['assets']
+          expected=json.loads(Path('dist/preview5-expected.json').read_text())
+          def upload(name):
+              subprocess.run(['gh','release','upload',os.environ['TAG'],str(Path('dist/preview5-publication')/name),'--repo',repo],check=True)
+          with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(upload,expected))
+          assets={a['name']:a for a in api(endpoint+'/assets?per_page=100')}
+          assert set(assets)==set(expected)
+          for name,value in expected.items():
+              a=assets[name]
+              assert a['state']=='uploaded' and a['size']==value['bytes'] and a['digest']=='sha256:'+value['sha256'],name
+          obj=api(f'repos/{repo}/git/ref/tags/'+os.environ['TAG'])['object']
+          target=api(f'repos/{repo}/git/tags/'+obj['sha'])['object']['sha'] if obj['type']=='tag' else obj['sha']
+          assert target==os.environ['SOURCE_SHA']
+          Path('publish.json').write_text(json.dumps({'tag_name':os.environ['TAG'],'target_commitish':os.environ['SOURCE_SHA'],'draft':False,'prerelease':True,'make_latest':'false'}))
+          subprocess.run(['gh','api','--method','PATCH',endpoint,'--input','publish.json','--jq','{id,html_url,draft,prerelease}'],check=True)
+          PY
