@@ -73,7 +73,11 @@ class AnimationPackStore(private val root: File) {
         users++
         clips
     }
-    fun install(input: InputStream, checkFrame: (File) -> Boolean, cancelled: () -> Unit = {}): PackManifest {
+    fun install(input: InputStream, checkFrame: (File) -> Boolean, cancelled: () -> Unit = {}): PackManifest =
+        installInternal(input, checkFrame, cancelled, null)
+    fun installVerified(input: InputStream, checkFrame: (File) -> Boolean, id: String, version: Int, cancelled: () -> Unit): PackManifest =
+        installInternal(input, checkFrame, cancelled, id to version)
+    private fun installInternal(input: InputStream, checkFrame: (File) -> Boolean, cancelled: () -> Unit, expected: Pair<String,Int>?): PackManifest {
         beginWrite()
         val stage = File(root, ".staging-${UUID.randomUUID()}")
         try {
@@ -120,6 +124,7 @@ class AnimationPackStore(private val root: File) {
                 }
             }
             val pack = manifest(stage)
+            if (expected != null && (pack.id != expected.first || pack.version != expected.second)) throw PackFailure("invalid")
             val expected = (1..pack.frames).map { "frames/f_%04d.webp".format(java.util.Locale.ROOT, it) }.toSet()
             if (seen.filter { it.startsWith("frames/") && it != "frames/" }.toSet() != expected ||
                 !seen.containsAll(listOf("NOTICE.txt", "THIRD_PARTY_NOTICES.md"))) throw PackFailure("invalid")

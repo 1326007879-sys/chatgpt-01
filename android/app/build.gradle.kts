@@ -4,6 +4,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val developmentInstall = providers.gradleProperty("petDevelopmentInstall").orNull == "true"
+
 val previewInstall = providers.gradleProperty("petPreviewInstall").orNull == "true"
 
 android {
@@ -11,12 +13,12 @@ android {
     namespace = "io.github.chatgpt01.petai"
     compileSdk = 36
     defaultConfig {
-        applicationId = if (previewInstall) "io.github.chatgpt01.petai.preview4" else "io.github.chatgpt01.petai"
+        applicationId = if (developmentInstall) "io.github.chatgpt01.petai.development" else if (previewInstall) "io.github.chatgpt01.petai.preview4" else "io.github.chatgpt01.petai"
         minSdk = 26
         targetSdk = 36
         versionCode = 4
         versionName = "0.1.0-preview.4"
-        manifestPlaceholders["petAppLabel"] = if (previewInstall) "AI 桌宠·预览4" else "@string/app_name"
+        manifestPlaceholders["petAppLabel"] = if (developmentInstall) "AI 桌宠·开发测试" else if (previewInstall) "AI 桌宠·预览4" else "@string/app_name"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {

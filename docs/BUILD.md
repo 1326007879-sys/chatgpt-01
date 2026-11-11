@@ -44,3 +44,9 @@ Python/Qt/ffmpeg 仅在构建机使用，APK 不包含它们。所有构建依�
 ## 插件原型
 
 独立模块plugin-notes和plugin-fault生成各自APK；共享协议/SDK只在构建时复用源码。构建与设备验证步骤见 [PLUGIN_PROTOCOL.md](PLUGIN_PROTOCOL.md)。
+
+## 未发布的提醒/动画开发构建
+
+追加 `-PpetDevelopmentInstall=true` 可构建独立包名 `io.github.chatgpt01.petai.development`，名称“AI 桌宠·开发测试”，不覆盖预览4。数据、密钥和插件配对不自动迁移。此属性优先于petPreviewInstall，仅供本地测试，不能据此声称新Release已发布；版本号仍为当前开发基线。
+
+开发版新增通知、重启恢复、可选精确闹钟和前台语音播放能力，真实行为需要Android设备验收。

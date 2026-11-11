@@ -22,7 +22,7 @@ import io.github.chatgpt01.petai.chat.ui.ChatTheme
 import kotlinx.coroutines.*
 import java.io.File
 
-/** Local SAF import only: no storage permission, remote downloads or executable plugins. */
+/** Local SAF import and entry to separately managed online resource downloads. */
 class AnimationManagementActivity : LocalizedActivity() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var store: AnimationPackStore
@@ -44,7 +44,7 @@ class AnimationManagementActivity : LocalizedActivity() {
                 val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                     if (uri != null) operation {
                         contentResolver.openInputStream(uri)?.use { stream ->
-                            store.install(stream, ::validFrame) { currentCoroutineContextCheck() }
+                            store.install(stream, ::validAnimationFrame) { currentCoroutineContextCheck() }
                         } ?: throw PackFailure("invalid")
                         R.string.packs_success
                     }
@@ -55,6 +55,10 @@ class AnimationManagementActivity : LocalizedActivity() {
                         TextButton(onClick = { finish() }) { Text(stringResource(R.string.back)) }
                         Text(stringResource(R.string.packs_title), style = MaterialTheme.typography.headlineSmall)
                         Text(stringResource(R.string.packs_hint))
+                        OutlinedButton(onClick = {
+                            startActivity(android.content.Intent(this@AnimationManagementActivity, OnlineAnimationsActivity::class.java))
+                        }, enabled = !busy) { Text(stringResource(R.string.online_animations_title)) }
+
                         Text(stringResource(R.string.packs_core, coreCount))
                         if (runtime.running) OutlinedButton(onClick = {
                             PetOverlayService.command(this@AnimationManagementActivity, PetOverlayService.STOP)
@@ -130,18 +134,6 @@ class AnimationManagementActivity : LocalizedActivity() {
             }
         }
     }
-    private fun validFrame(file: File): Boolean {
-        val header = ByteArray(21)
-        val count = file.inputStream().use { it.read(header) }
-        if (count < 21 || String(header, 0, 4, Charsets.US_ASCII) != "RIFF" ||
-            String(header, 8, 4, Charsets.US_ASCII) != "WEBP") return false
-        if (String(header, 12, 4, Charsets.US_ASCII) == "VP8X" && (header[20].toInt() and 2) != 0) return false
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeFile(file.path, bounds)
-        if (bounds.outWidth != 640 || bounds.outHeight != 360 || bounds.outMimeType != "image/webp") return false
-        val bitmap = BitmapFactory.decodeFile(file.path) ?: return false
-        bitmap.recycle()
-        return true
-    }
+    override fun onResume() { super.onResume(); if (::store.isInitialized) operation { null } }
     override fun onDestroy() { scope.cancel(); super.onDestroy() }
 }

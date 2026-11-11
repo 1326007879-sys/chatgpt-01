@@ -1,0 +1,952 @@
+[
+  {
+    "id": "ext_ec4103857fc37f6d5ce12255",
+    "name": "余额-分文不剩",
+    "name_en": "No money left",
+    "version": 1,
+    "file": "ext_ec4103857fc37f6d5ce12255.petanim",
+    "bytes": 13960138,
+    "sha256": "42908d60b276357da01ecec80471e29eef087e9dd1b21911f08f7e5bbe2fb3c0",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_ec4103857fc37f6d5ce12255.petanim"
+  },
+  {
+    "id": "ext_7417515702f49021c37d3fb4",
+    "name": "余额-数金皱眉",
+    "name_en": "Counting coins",
+    "version": 1,
+    "file": "ext_7417515702f49021c37d3fb4.petanim",
+    "bytes": 13255612,
+    "sha256": "c697926a477819bcc8216d2ea0b4b5de61be2c37e5bb7d52621fd64934afe69f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_7417515702f49021c37d3fb4.petanim"
+  },
+  {
+    "id": "ext_c2cea84b2e72c483355dc621",
+    "name": "余额-袋空如洗",
+    "name_en": "Empty purse",
+    "version": 1,
+    "file": "ext_c2cea84b2e72c483355dc621.petanim",
+    "bytes": 13715224,
+    "sha256": "624d2d4c48348b4c0f17208cf1cd3b4fc7c4b2fc5a526e7b8516b04acc9eb297",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_c2cea84b2e72c483355dc621.petanim"
+  },
+  {
+    "id": "ext_bd8d827bb52fa7fe79de2519",
+    "name": "余额-金袋叮当",
+    "name_en": "Jingling coin bag",
+    "version": 1,
+    "file": "ext_bd8d827bb52fa7fe79de2519.petanim",
+    "bytes": 13845550,
+    "sha256": "766c9f511085d291e7c961b088172957c141f9ebbe547da23af69eec741a126d",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_bd8d827bb52fa7fe79de2519.petanim"
+  },
+  {
+    "id": "ext_98645fe0cc990d7e39eafa32",
+    "name": "余额-钱袋如常",
+    "name_en": "Usual savings",
+    "version": 1,
+    "file": "ext_98645fe0cc990d7e39eafa32.petanim",
+    "bytes": 13969098,
+    "sha256": "79c55278e5ac99a4361f1594b2b48ab4160c39faa9932989fe935ab2c2dfa141",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_98645fe0cc990d7e39eafa32.petanim"
+  },
+  {
+    "id": "ext_d14eea2c1408a68770fc5648",
+    "name": "余额-钱袋满溢",
+    "name_en": "Overflowing purse",
+    "version": 1,
+    "file": "ext_d14eea2c1408a68770fc5648.petanim",
+    "bytes": 14257904,
+    "sha256": "b391ef29813bd5abc3fe7bd2f9ce3f662fabcdc220d01cc80bcd4380e4bb13be",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_d14eea2c1408a68770fc5648.petanim"
+  },
+  {
+    "id": "ext_e83fde915257f34033daaf5c",
+    "name": "三球抛接",
+    "name_en": "Juggling three balls",
+    "version": 1,
+    "file": "ext_e83fde915257f34033daaf5c.petanim",
+    "bytes": 13852071,
+    "sha256": "88a244dc3da5a1721f43a0ead8c4fe5f71a1ead8eff7b3687a847dd20430c5a1",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_e83fde915257f34033daaf5c.petanim"
+  },
+  {
+    "id": "ext_0fe21783964addb7af7059ed",
+    "name": "下五子棋",
+    "name_en": "Playing Gomoku",
+    "version": 1,
+    "file": "ext_0fe21783964addb7af7059ed.petanim",
+    "bytes": 13474199,
+    "sha256": "5ef9e050dee6e74a4ba5dd3e3199f8ccde7a5f0967743d472762a58bafde4f3c",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_0fe21783964addb7af7059ed.petanim"
+  },
+  {
+    "id": "ext_dc290c19ccb87403e2091495",
+    "name": "中秋赏月吃月饼",
+    "name_en": "Mooncakes under the moon",
+    "version": 1,
+    "file": "ext_dc290c19ccb87403e2091495.petanim",
+    "bytes": 15117553,
+    "sha256": "632b1a1f61edf35f52c72996dc370d5346f283b1682a95ae57abd65e28b4fcd7",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_dc290c19ccb87403e2091495.petanim"
+  },
+  {
+    "id": "ext_1d39d06ed9521e1daef1c76b",
+    "name": "优雅女仆舞",
+    "name_en": "Elegant maid dance",
+    "version": 1,
+    "file": "ext_1d39d06ed9521e1daef1c76b.petanim",
+    "bytes": 12922784,
+    "sha256": "3ddf788934be55107812d8d0fed952870beec05fa99e5ae3579360a3f97422de",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_1d39d06ed9521e1daef1c76b.petanim"
+  },
+  {
+    "id": "ext_4d8dd86526be5d7d72aae72f",
+    "name": "偷吃零食被抓住",
+    "name_en": "Caught snacking",
+    "version": 1,
+    "file": "ext_4d8dd86526be5d7d72aae72f.petanim",
+    "bytes": 13902359,
+    "sha256": "fe6a20802137715e607883fb906b7233a66069d8ed821427ffc7797eec2fae53",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4d8dd86526be5d7d72aae72f.petanim"
+  },
+  {
+    "id": "ext_02e4b621f211dc68bf44a7f2",
+    "name": "写代码",
+    "name_en": "Writing code",
+    "version": 1,
+    "file": "ext_02e4b621f211dc68bf44a7f2.petanim",
+    "bytes": 12976449,
+    "sha256": "8b63fd01884a98a4158ca76c71861ea672fcc3f08f14b7d6de1298d4e474e4d8",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_02e4b621f211dc68bf44a7f2.petanim"
+  },
+  {
+    "id": "ext_4002cc7deb4d56ce33978100",
+    "name": "写福字",
+    "name_en": "Writing a lucky character",
+    "version": 1,
+    "file": "ext_4002cc7deb4d56ce33978100.petanim",
+    "bytes": 13221408,
+    "sha256": "f9245bac3d1b768e5458b6bb80821e31a7f15878ca78ca3c7c0b43765cd3e4e4",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4002cc7deb4d56ce33978100.petanim"
+  },
+  {
+    "id": "ext_e9cf4b0d4bdc78b783dfa499",
+    "name": "凭空生花",
+    "name_en": "Flowers from thin air",
+    "version": 1,
+    "file": "ext_e9cf4b0d4bdc78b783dfa499.petanim",
+    "bytes": 14153247,
+    "sha256": "80a741e2e18918e6986e53ca3620534b04d9e2706d724116bb77cad16d8be567",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_e9cf4b0d4bdc78b783dfa499.petanim"
+  },
+  {
+    "id": "ext_6f2c07fd8bac6b7d0d40759f",
+    "name": "动物环绕",
+    "name_en": "Surrounded by animals",
+    "version": 1,
+    "file": "ext_6f2c07fd8bac6b7d0d40759f.petanim",
+    "bytes": 19472923,
+    "sha256": "f868b5287149cc82fd61fe6b8ca72ad8e23b40b670540f0b56671aae89f44a25",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_6f2c07fd8bac6b7d0d40759f.petanim"
+  },
+  {
+    "id": "ext_9c4de6aeba76f88509717824",
+    "name": "原地专心玩魔方",
+    "name_en": "Solving a Rubik’s cube",
+    "version": 1,
+    "file": "ext_9c4de6aeba76f88509717824.petanim",
+    "bytes": 13608130,
+    "sha256": "07f5964194fa0530c3f8bf48cb85ef62d585a3629156cdea81b7533e3cb1d026",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_9c4de6aeba76f88509717824.petanim"
+  },
+  {
+    "id": "ext_0ad10e1335d5e0bf32c79e32",
+    "name": "原地小憩沉眠",
+    "name_en": "Taking a nap",
+    "version": 1,
+    "file": "ext_0ad10e1335d5e0bf32c79e32.petanim",
+    "bytes": 13555601,
+    "sha256": "3bf1a185c7eccee7fa46e00c32d241ba9961f0985cf9b30dc5eded692f7fc659",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_0ad10e1335d5e0bf32c79e32.petanim"
+  },
+  {
+    "id": "ext_d26f60d4b01390ec7926b5e2",
+    "name": "原地敲击桌面互动",
+    "name_en": "Tapping the desk",
+    "version": 1,
+    "file": "ext_d26f60d4b01390ec7926b5e2.petanim",
+    "bytes": 12832139,
+    "sha256": "54f1331574ae7405494d17b668889608da7f22b114980880c8afa4a90ce5e5f5",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_d26f60d4b01390ec7926b5e2.petanim"
+  },
+  {
+    "id": "ext_e4584b2db3fbffd1b8d35a44",
+    "name": "原地跳跃抓碎头顶物品",
+    "name_en": "Jumping to catch an object",
+    "version": 1,
+    "file": "ext_e4584b2db3fbffd1b8d35a44.petanim",
+    "bytes": 14291012,
+    "sha256": "5d20d7f2ad8a803445cb87394184e01cfe543ba1cae788909abf4c461bb6ddb0",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_e4584b2db3fbffd1b8d35a44.petanim"
+  },
+  {
+    "id": "ext_6996e26a6ad46920576a0d4e",
+    "name": "原地蹲下玩玩具汽车",
+    "name_en": "Playing with a toy car",
+    "version": 1,
+    "file": "ext_6996e26a6ad46920576a0d4e.petanim",
+    "bytes": 12317741,
+    "sha256": "0b3acf4de756e6e77d9ef6a449f41c563474958cee8bc0ee828696fe75986c1d",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_6996e26a6ad46920576a0d4e.petanim"
+  },
+  {
+    "id": "ext_3a3ee33c48dd3c8e8393a026",
+    "name": "原地重力下蹲压缩",
+    "name_en": "Squashing down",
+    "version": 1,
+    "file": "ext_3a3ee33c48dd3c8e8393a026.petanim",
+    "bytes": 10848941,
+    "sha256": "75fdfbf14e34bda72ca7541a4621cc3a8a236b354ec6278bb7fe578d184eeeef",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_3a3ee33c48dd3c8e8393a026.petanim"
+  },
+  {
+    "id": "ext_ef9eda56bbecb59c4b70a72c",
+    "name": "变鸽子",
+    "name_en": "Turning into a pigeon",
+    "version": 1,
+    "file": "ext_ef9eda56bbecb59c4b70a72c.petanim",
+    "bytes": 13306065,
+    "sha256": "ac4ce5306d1cb336e5d4488ac0fa5185ebdcd085ff35c25f5b1e567ea12f7b2a",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_ef9eda56bbecb59c4b70a72c.petanim"
+  },
+  {
+    "id": "ext_9fdb2cfffde0f706cc1a58e9",
+    "name": "可爱宅舞",
+    "name_en": "Cute dance",
+    "version": 1,
+    "file": "ext_9fdb2cfffde0f706cc1a58e9.petanim",
+    "bytes": 13419761,
+    "sha256": "e1b0296c02d8abd5dd66b3ba6805ad9c5dcfa60894567ac37e895beaa2dda08d",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_9fdb2cfffde0f706cc1a58e9.petanim"
+  },
+  {
+    "id": "ext_14014b8263b6bec61178507f",
+    "name": "吃Token",
+    "name_en": "Eating tokens",
+    "version": 1,
+    "file": "ext_14014b8263b6bec61178507f.petanim",
+    "bytes": 15180177,
+    "sha256": "72c97df2e983c671a21811b67307c7c0b5e953cdc9e84dfa51db6b84e939f992",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_14014b8263b6bec61178507f.petanim"
+  },
+  {
+    "id": "ext_996acfef8f9e56deb4893609",
+    "name": "吃冰淇淋融化",
+    "name_en": "Melting ice cream",
+    "version": 1,
+    "file": "ext_996acfef8f9e56deb4893609.petanim",
+    "bytes": 13553372,
+    "sha256": "c634662a50884ccec371227c95bd2b77ff04c737e7d2f4e9533b8b4ecd3fc712",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_996acfef8f9e56deb4893609.petanim"
+  },
+  {
+    "id": "ext_a27ab7abcbc4a9663375a2e0",
+    "name": "吃午餐",
+    "name_en": "Having lunch",
+    "version": 1,
+    "file": "ext_a27ab7abcbc4a9663375a2e0.petanim",
+    "bytes": 13408604,
+    "sha256": "fb7bed1f6a0d6789e2f835c9b1226534bc324e578951e4994004b99e9c2c67fa",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_a27ab7abcbc4a9663375a2e0.petanim"
+  },
+  {
+    "id": "ext_03be6e00f22c21c0e5e316d1",
+    "name": "吃大闸蟹",
+    "name_en": "Eating crab",
+    "version": 1,
+    "file": "ext_03be6e00f22c21c0e5e316d1.petanim",
+    "bytes": 13980640,
+    "sha256": "5b41ca558929ec1f646cd43719a73d922eb9a4c94eb7792a10409a05d9c99252",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_03be6e00f22c21c0e5e316d1.petanim"
+  },
+  {
+    "id": "ext_51219c201064aa34a997e95d",
+    "name": "吃年糕",
+    "name_en": "Eating rice cakes",
+    "version": 1,
+    "file": "ext_51219c201064aa34a997e95d.petanim",
+    "bytes": 13119787,
+    "sha256": "e6c5c8dd66b9c72bb70dbbb7ba378f849410ec75974d133629625fed17e655c7",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_51219c201064aa34a997e95d.petanim"
+  },
+  {
+    "id": "ext_3942d64243a7f3176a0f103e",
+    "name": "吃早餐",
+    "name_en": "Having breakfast",
+    "version": 1,
+    "file": "ext_3942d64243a7f3176a0f103e.petanim",
+    "bytes": 13234394,
+    "sha256": "fe3fb3d91dcb7c1a018056cd0667a1a0e958a99de4c8e65bf00e5fa771c808ef",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_3942d64243a7f3176a0f103e.petanim"
+  },
+  {
+    "id": "ext_201b49771f1b789d15e1e42c",
+    "name": "吃晚餐",
+    "name_en": "Having dinner",
+    "version": 1,
+    "file": "ext_201b49771f1b789d15e1e42c.petanim",
+    "bytes": 19066440,
+    "sha256": "b28a9729358fbfc92b40e01b0bb5e06679dbcfe32c1ebcf572938cad1eb9488b",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_201b49771f1b789d15e1e42c.petanim"
+  },
+  {
+    "id": "ext_4c1aea11fc7cfa4d962e6ed5",
+    "name": "吃汤圆",
+    "name_en": "Eating tangyuan",
+    "version": 1,
+    "file": "ext_4c1aea11fc7cfa4d962e6ed5.petanim",
+    "bytes": 13235601,
+    "sha256": "fd65256fa48b778348acd1407bc9b4a9ab2e4c03e843662db6af3f0d5e028e9f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4c1aea11fc7cfa4d962e6ed5.petanim"
+  },
+  {
+    "id": "ext_c6b046550a9c3dd54b24a80a",
+    "name": "吃白饭",
+    "name_en": "Eating rice",
+    "version": 1,
+    "file": "ext_c6b046550a9c3dd54b24a80a.petanim",
+    "bytes": 13358137,
+    "sha256": "5dc9de98ed794f835090ddedbaa6c4a447d92459b429592aa1d83c4f8d9683e9",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_c6b046550a9c3dd54b24a80a.petanim"
+  },
+  {
+    "id": "ext_badb1140ac7a24cca2a17a6a",
+    "name": "吃粽子",
+    "name_en": "Eating zongzi",
+    "version": 1,
+    "file": "ext_badb1140ac7a24cca2a17a6a.petanim",
+    "bytes": 13549339,
+    "sha256": "2deb0343c01a4e0aee7125c7bb3b440ed035aeb2347c4e17d6bdc9b3ded877d8",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_badb1140ac7a24cca2a17a6a.petanim"
+  },
+  {
+    "id": "ext_79bb5dbeb0f8ed57cb1b1a8b",
+    "name": "吃糖葫芦",
+    "name_en": "Eating candied hawthorn",
+    "version": 1,
+    "file": "ext_79bb5dbeb0f8ed57cb1b1a8b.petanim",
+    "bytes": 13664192,
+    "sha256": "e0fd6ce5fba3f03c8aef0c921076fe3376c98e5ac9d1770328ddae4d0dc04b20",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_79bb5dbeb0f8ed57cb1b1a8b.petanim"
+  },
+  {
+    "id": "ext_cc8e7f64b7b1c9a3ab354eaa",
+    "name": "吃腊八粥",
+    "name_en": "Eating Laba porridge",
+    "version": 1,
+    "file": "ext_cc8e7f64b7b1c9a3ab354eaa.petanim",
+    "bytes": 13170173,
+    "sha256": "08381e629c5985bd545034fab9088e3f6e55c9c7d9e8dbea0102b3f8532443f8",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_cc8e7f64b7b1c9a3ab354eaa.petanim"
+  },
+  {
+    "id": "ext_fe144eaa3afeff7a160771ee",
+    "name": "吃西瓜",
+    "name_en": "Eating watermelon",
+    "version": 1,
+    "file": "ext_fe144eaa3afeff7a160771ee.petanim",
+    "bytes": 13853279,
+    "sha256": "aa3534ba405428942fb86036504c809bb533eb6d4fa0cacfd1567b3fca7e560c",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_fe144eaa3afeff7a160771ee.petanim"
+  },
+  {
+    "id": "ext_4191f22a204ef9df24233214",
+    "name": "吃重阳糕",
+    "name_en": "Eating Double Ninth cake",
+    "version": 1,
+    "file": "ext_4191f22a204ef9df24233214.petanim",
+    "bytes": 13290835,
+    "sha256": "d6f0c588094914a74f4d675a4b4ecafc6f909a74ec8444e0fa8f2f91e0917d84",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4191f22a204ef9df24233214.petanim"
+  },
+  {
+    "id": "ext_27a4965824fba77cecd9af99",
+    "name": "吃长寿面",
+    "name_en": "Eating longevity noodles",
+    "version": 1,
+    "file": "ext_27a4965824fba77cecd9af99.petanim",
+    "bytes": 13632379,
+    "sha256": "a653c9688c39a97d22d6a3bd4b55e2fe61ae8b593c1495804e871bd78b54e065",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_27a4965824fba77cecd9af99.petanim"
+  },
+  {
+    "id": "ext_92cdab601266a855f7ad045b",
+    "name": "吃青团",
+    "name_en": "Eating qingtuan",
+    "version": 1,
+    "file": "ext_92cdab601266a855f7ad045b.petanim",
+    "bytes": 13350719,
+    "sha256": "f0505abd27811dba7290d1285f2006aaeb69fb99fb0e3b3419310de3bbc05592",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_92cdab601266a855f7ad045b.petanim"
+  },
+  {
+    "id": "ext_08c341efd7b11341eeab072f",
+    "name": "吃饺子",
+    "name_en": "Eating dumplings",
+    "version": 1,
+    "file": "ext_08c341efd7b11341eeab072f.petanim",
+    "bytes": 14395940,
+    "sha256": "9641ab6df52e34e7459ba3fc5f2c32b3d90fe9a1461b1978bf0c3bac6cd4a507",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_08c341efd7b11341eeab072f.petanim"
+  },
+  {
+    "id": "ext_60b729d7f90955529dad5326",
+    "name": "吹气球",
+    "name_en": "Blowing up a balloon",
+    "version": 1,
+    "file": "ext_60b729d7f90955529dad5326.petanim",
+    "bytes": 15783929,
+    "sha256": "719fb95df02faaaa3aae3ee5f42e71a6fcd943f98516fe3d80a483c23879bb6e",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_60b729d7f90955529dad5326.petanim"
+  },
+  {
+    "id": "ext_36b35bea7dab67c6f10af9f1",
+    "name": "吹笛子",
+    "name_en": "Playing the flute",
+    "version": 1,
+    "file": "ext_36b35bea7dab67c6f10af9f1.petanim",
+    "bytes": 16230974,
+    "sha256": "c3da8b5a14f77702bdb08eee60bb6f8d568035ff7826e8c390d676e4c429e8ae",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_36b35bea7dab67c6f10af9f1.petanim"
+  },
+  {
+    "id": "ext_f1a44173c6fef88dcfad9e05",
+    "name": "哈欠连天",
+    "name_en": "Yawning",
+    "version": 1,
+    "file": "ext_f1a44173c6fef88dcfad9e05.petanim",
+    "bytes": 13620606,
+    "sha256": "8659f939844c526888f663ccca0768e11977e64d27892d1b289898a525ac01a1",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_f1a44173c6fef88dcfad9e05.petanim"
+  },
+  {
+    "id": "ext_adefd6cf1542c4ec36d3f1b9",
+    "name": "堆雪人",
+    "name_en": "Building a snowman",
+    "version": 1,
+    "file": "ext_adefd6cf1542c4ec36d3f1b9.petanim",
+    "bytes": 13149130,
+    "sha256": "6a5f0e55793486635a9dcc049fa442b56b063e5af818a81bb00c1d0b9df084dd",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_adefd6cf1542c4ec36d3f1b9.petanim"
+  },
+  {
+    "id": "ext_e4a0a7da46de6d0cb55c079f",
+    "name": "大口吃零食",
+    "name_en": "Snacking",
+    "version": 1,
+    "file": "ext_e4a0a7da46de6d0cb55c079f.petanim",
+    "bytes": 16820837,
+    "sha256": "41aa6302f5f759564210c63ad56a7ac8aa8e7fa57e139e235ed23c09a323ed34",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_e4a0a7da46de6d0cb55c079f.petanim"
+  },
+  {
+    "id": "ext_fd5eb1174886208904b57145",
+    "name": "女仆屈膝礼仪",
+    "name_en": "Maid curtsy",
+    "version": 1,
+    "file": "ext_fd5eb1174886208904b57145.petanim",
+    "bytes": 12936856,
+    "sha256": "63bbab3ba2381c8ba5c39091fddc5c77d620b66af9e700a87ec28c54b3b2eae9",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_fd5eb1174886208904b57145.petanim"
+  },
+  {
+    "id": "ext_56cb6ec4ff56e561ee1249d3",
+    "name": "小幅度原地360度旋转展示",
+    "name_en": "Spinning around",
+    "version": 1,
+    "file": "ext_56cb6ec4ff56e561ee1249d3.petanim",
+    "bytes": 12696923,
+    "sha256": "24ec61d7b8959d941bdfdc0d04c1932727d122ee1435b46c77c0c2f7a19988c1",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_56cb6ec4ff56e561ee1249d3.petanim"
+  },
+  {
+    "id": "ext_09568010b8f28dead4910ed1",
+    "name": "小提琴演奏",
+    "name_en": "Playing the violin",
+    "version": 1,
+    "file": "ext_09568010b8f28dead4910ed1.petanim",
+    "bytes": 14013214,
+    "sha256": "f33acc3aaa064a9eaccfe00edca3cde6e62542ca9e881502efc6a7256a6ced7a",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_09568010b8f28dead4910ed1.petanim"
+  },
+  {
+    "id": "ext_83900bb624445b365f4dd53b",
+    "name": "工作状态-原地踱步张望",
+    "name_en": "Pacing at work",
+    "version": 1,
+    "file": "ext_83900bb624445b365f4dd53b.petanim",
+    "bytes": 14135472,
+    "sha256": "d98c09d5ade7458edad993e056c0e94706c1615a28121a8b9649e563d4a41ce4",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_83900bb624445b365f4dd53b.petanim"
+  },
+  {
+    "id": "ext_9f3a03399db257bc3c4fc5ce",
+    "name": "工作状态-垂头叹气冒汗",
+    "name_en": "Sighing at work",
+    "version": 1,
+    "file": "ext_9f3a03399db257bc3c4fc5ce.petanim",
+    "bytes": 6884005,
+    "sha256": "2b9c48ccb901d2691370d4faf4015515ae141dd8c399f111bf668cb92b116b1f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_9f3a03399db257bc3c4fc5ce.petanim"
+  },
+  {
+    "id": "ext_85bec11769a3d7395a0b4e97",
+    "name": "工作状态-忙碌点按",
+    "name_en": "Busy tapping",
+    "version": 1,
+    "file": "ext_85bec11769a3d7395a0b4e97.petanim",
+    "bytes": 14653107,
+    "sha256": "2e50657a420e9d11065d26004ea6932d9bbc798ed56e564d3a5f4a535e2d4f96",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_85bec11769a3d7395a0b4e97.petanim"
+  },
+  {
+    "id": "ext_82fb4de2f5f3dcd37da0fff3",
+    "name": "工作状态-思考冒泡",
+    "name_en": "Thinking at work",
+    "version": 1,
+    "file": "ext_82fb4de2f5f3dcd37da0fff3.petanim",
+    "bytes": 14183256,
+    "sha256": "2955b11e6b416ec70704ff64f1360692184fbb7c5e95d8e6362fa9f6516aa5e7",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_82fb4de2f5f3dcd37da0fff3.petanim"
+  },
+  {
+    "id": "ext_9eff5f3e0f34d1efbb753f2a",
+    "name": "工作状态-清点归档",
+    "name_en": "Sorting files",
+    "version": 1,
+    "file": "ext_9eff5f3e0f34d1efbb753f2a.petanim",
+    "bytes": 13154445,
+    "sha256": "3e41e1186f26d911c55d174a4ba9d727ae58e29ec0327d64e7d107411834f42b",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_9eff5f3e0f34d1efbb753f2a.petanim"
+  },
+  {
+    "id": "ext_4d1e51ef82c92cec9bb8b20a",
+    "name": "工作状态-雀跃庆祝",
+    "name_en": "Celebrating work",
+    "version": 1,
+    "file": "ext_4d1e51ef82c92cec9bb8b20a.petanim",
+    "bytes": 14068364,
+    "sha256": "d94808908ab7c7cc1dc5c716f0420fa95b359868954e8c89e3cf5575f3643e44",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4d1e51ef82c92cec9bb8b20a.petanim"
+  },
+  {
+    "id": "ext_651d8a75d4d0fc574434087e",
+    "name": "悠闲哼歌",
+    "name_en": "Humming",
+    "version": 1,
+    "file": "ext_651d8a75d4d0fc574434087e.petanim",
+    "bytes": 14570049,
+    "sha256": "975782512b57373669886debac25bf0d2edceb763260bc2335be9f99bf512c1d",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_651d8a75d4d0fc574434087e.petanim"
+  },
+  {
+    "id": "ext_2fbe6924fcca9d7372217322",
+    "name": "扑克魔术",
+    "name_en": "Card magic",
+    "version": 1,
+    "file": "ext_2fbe6924fcca9d7372217322.petanim",
+    "bytes": 13539417,
+    "sha256": "c620df29679dddda34222873f8d69c27ab5740df030283393865d4a6d239faac",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_2fbe6924fcca9d7372217322.petanim"
+  },
+  {
+    "id": "ext_c83a85f3a6b6384dfdd0a6db",
+    "name": "打瞌睡被惊醒",
+    "name_en": "Startled awake",
+    "version": 1,
+    "file": "ext_c83a85f3a6b6384dfdd0a6db.petanim",
+    "bytes": 13273941,
+    "sha256": "4d9357059666af7ad9d2bf30c27345cc1636b4bdc4fd960dfed8a4176290755e",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_c83a85f3a6b6384dfdd0a6db.petanim"
+  },
+  {
+    "id": "ext_1adfbd59f9b460397ad80ea4",
+    "name": "抽陀螺",
+    "name_en": "Spinning a top",
+    "version": 1,
+    "file": "ext_1adfbd59f9b460397ad80ea4.petanim",
+    "bytes": 13589878,
+    "sha256": "6aef6598ebffe08dbaad30a9411cba67ea33081bfbafb31af9a1796f87451be0",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_1adfbd59f9b460397ad80ea4.petanim"
+  },
+  {
+    "id": "ext_65851bc260794c7bd22b6e73",
+    "name": "拆礼物",
+    "name_en": "Opening a present",
+    "version": 1,
+    "file": "ext_65851bc260794c7bd22b6e73.petanim",
+    "bytes": 13512187,
+    "sha256": "ed9cd3808211da1465192fe3987e3a8d7c982e8d1b39a8217f35bd88363b6f5f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_65851bc260794c7bd22b6e73.petanim"
+  },
+  {
+    "id": "ext_ea07d9b543026218c2ebdb61",
+    "name": "插茱萸赏菊",
+    "name_en": "Enjoying chrysanthemums",
+    "version": 1,
+    "file": "ext_ea07d9b543026218c2ebdb61.petanim",
+    "bytes": 13459425,
+    "sha256": "d3756bac72f78837e6e97e7b4855abfdb919b28afe501472eafccb7ac2c01c71",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_ea07d9b543026218c2ebdb61.petanim"
+  },
+  {
+    "id": "ext_89465399d17a71f391573725",
+    "name": "摇扇纳凉",
+    "name_en": "Cooling off with a fan",
+    "version": 1,
+    "file": "ext_89465399d17a71f391573725.petanim",
+    "bytes": 14154573,
+    "sha256": "c629d6d4c4f839a3559d06a4ca842789320368f8f28fec682e853058d8e3219c",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_89465399d17a71f391573725.petanim"
+  },
+  {
+    "id": "ext_68a57bd18028c273a09044d4",
+    "name": "撸猫",
+    "name_en": "Petting a cat",
+    "version": 1,
+    "file": "ext_68a57bd18028c273a09044d4.petanim",
+    "bytes": 13746578,
+    "sha256": "0e59b84ba41c0defe31a865ee7f3e25bab51c7e42877ff52bb563f50995cb69f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_68a57bd18028c273a09044d4.petanim"
+  },
+  {
+    "id": "ext_d25e3622e3502b9dd1ffe908",
+    "name": "收红包",
+    "name_en": "Receiving a red envelope",
+    "version": 1,
+    "file": "ext_d25e3622e3502b9dd1ffe908.petanim",
+    "bytes": 13202859,
+    "sha256": "a734605478688842144cd3bc9abeeb71cc48033bbb696a13a30a2671ed31840f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_d25e3622e3502b9dd1ffe908.petanim"
+  },
+  {
+    "id": "ext_cf8b13313606912a10542332",
+    "name": "放孔明灯",
+    "name_en": "Releasing a sky lantern",
+    "version": 1,
+    "file": "ext_cf8b13313606912a10542332.petanim",
+    "bytes": 15732835,
+    "sha256": "b4daeaaa82b004cfa5ee193db22a44a0d53dd7c69970178db9fc088a1d6458a8",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_cf8b13313606912a10542332.petanim"
+  },
+  {
+    "id": "ext_2a12650adfd01198eb1cb372",
+    "name": "放河灯",
+    "name_en": "Floating a river lantern",
+    "version": 1,
+    "file": "ext_2a12650adfd01198eb1cb372.petanim",
+    "bytes": 13169900,
+    "sha256": "7ce25df89d3ed8c877f2f3676bf2216c7b14c56bacafb9d4ba1418bd8a3ab197",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_2a12650adfd01198eb1cb372.petanim"
+  },
+  {
+    "id": "ext_9861faa7d016a25abeb2c5c5",
+    "name": "放烟花",
+    "name_en": "Fireworks",
+    "version": 1,
+    "file": "ext_9861faa7d016a25abeb2c5c5.petanim",
+    "bytes": 24593149,
+    "sha256": "25230991369ece4acf5ac5502411c80e1f92f4873685d5b1ed1e8b6b7a537f81",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_9861faa7d016a25abeb2c5c5.petanim"
+  },
+  {
+    "id": "ext_90a928b3efdeea3dcea6e3be",
+    "name": "放风筝",
+    "name_en": "Flying a kite",
+    "version": 1,
+    "file": "ext_90a928b3efdeea3dcea6e3be.petanim",
+    "bytes": 16305056,
+    "sha256": "a91744ecff83479d7fa7e0c0e8ca84aff20176e9c218164ab7c290a72ba76925",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_90a928b3efdeea3dcea6e3be.petanim"
+  },
+  {
+    "id": "ext_64f9178a5e6e586c5efedf15",
+    "name": "整体换装试色",
+    "name_en": "Trying on outfits",
+    "version": 1,
+    "file": "ext_64f9178a5e6e586c5efedf15.petanim",
+    "bytes": 11989362,
+    "sha256": "50db19bbe386332255970fcda4a7f5f874885e4e13e31f2c8b98e528b12e1dac",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_64f9178a5e6e586c5efedf15.petanim"
+  },
+  {
+    "id": "ext_59c5f097ecb97699f11ef081",
+    "name": "是啊，吃什么",
+    "name_en": "What shall we eat?",
+    "version": 1,
+    "file": "ext_59c5f097ecb97699f11ef081.petanim",
+    "bytes": 17422313,
+    "sha256": "eb8ca5f22cc4d53a46c4044cd50e1ab5cf40960988846332da04d6870ef07c94",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_59c5f097ecb97699f11ef081.petanim"
+  },
+  {
+    "id": "ext_5f7d8746f00d358faeea72ad",
+    "name": "晨间刷牙",
+    "name_en": "Brushing teeth",
+    "version": 1,
+    "file": "ext_5f7d8746f00d358faeea72ad.petanim",
+    "bytes": 13790815,
+    "sha256": "b00a931028cd1a8f250a0f0a3f0d1457fc231ed342bfe6fae1dc646fe7713d0b",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_5f7d8746f00d358faeea72ad.petanim"
+  },
+  {
+    "id": "ext_c29190b4da7215a2a87eeda5",
+    "name": "涮火锅",
+    "name_en": "Hot pot",
+    "version": 1,
+    "file": "ext_c29190b4da7215a2a87eeda5.petanim",
+    "bytes": 14192153,
+    "sha256": "24cdce63d2fdd17b28e5d24b5e831155a1570f7d9efb39223f5d40d06554d5a6",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_c29190b4da7215a2a87eeda5.petanim"
+  },
+  {
+    "id": "ext_b4a1abb1000209a4f3cdbbc4",
+    "name": "深度思考碎碎念",
+    "name_en": "Thinking aloud",
+    "version": 1,
+    "file": "ext_b4a1abb1000209a4f3cdbbc4.petanim",
+    "bytes": 15817174,
+    "sha256": "228bf401a6cbae7011eab0d559fa95ec2480aa7ffe37ce5c16af77c2ce918b7f",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_b4a1abb1000209a4f3cdbbc4.petanim"
+  },
+  {
+    "id": "ext_c934090c62eeef02b057b05c",
+    "name": "照镜子",
+    "name_en": "Looking in the mirror",
+    "version": 1,
+    "file": "ext_c934090c62eeef02b057b05c.petanim",
+    "bytes": 13582543,
+    "sha256": "477919e9ea302ea39a7a064e6c321e077636e2d9375778c981a2fcf1af8ddd81",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_c934090c62eeef02b057b05c.petanim"
+  },
+  {
+    "id": "ext_8acc285c9f480068a249fc09",
+    "name": "玩水枪",
+    "name_en": "Playing with a water gun",
+    "version": 1,
+    "file": "ext_8acc285c9f480068a249fc09.petanim",
+    "bytes": 14477043,
+    "sha256": "2a6e9fe677e0f932ca5a92809df62802446d9acbfa0cab5d81f1c2337756a1f2",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_8acc285c9f480068a249fc09.petanim"
+  },
+  {
+    "id": "ext_b6b1b6fbb6674f41877a21b0",
+    "name": "玩游戏气急败坏",
+    "name_en": "Frustrated gaming",
+    "version": 1,
+    "file": "ext_b6b1b6fbb6674f41877a21b0.petanim",
+    "bytes": 14697355,
+    "sha256": "84eff762642199a4447b8854cd024015b4f331c7fe32493f89500c97a922033b",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_b6b1b6fbb6674f41877a21b0.petanim"
+  },
+  {
+    "id": "ext_56eee254e58125a15421660d",
+    "name": "用鲸鱼尾巴拍打地面",
+    "name_en": "Whale tail slap",
+    "version": 1,
+    "file": "ext_56eee254e58125a15421660d.petanim",
+    "bytes": 13794955,
+    "sha256": "bcfdeaddabaa72cbb60b375eae73cdbe702dc502058603de8349090762555e41",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_56eee254e58125a15421660d.petanim"
+  },
+  {
+    "id": "ext_aded2a8384a9025b4f1beb73",
+    "name": "碎碎念-发呆碎碎念",
+    "name_en": "Daydreaming and muttering",
+    "version": 1,
+    "file": "ext_aded2a8384a9025b4f1beb73.petanim",
+    "bytes": 13402631,
+    "sha256": "f918428e6a7e13bb37b38d540d871bfd4dbbbbccc509ce301909df310533c134",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_aded2a8384a9025b4f1beb73.petanim"
+  },
+  {
+    "id": "ext_fae8422278c53372e6cf29c8",
+    "name": "碎碎念-对屏碎碎念",
+    "name_en": "Muttering at the screen",
+    "version": 1,
+    "file": "ext_fae8422278c53372e6cf29c8.petanim",
+    "bytes": 13165389,
+    "sha256": "9591b0ab771006e91b7632d7ac88fdcfd46cad9da66ab0db333fa2ae0bf5505c",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_fae8422278c53372e6cf29c8.petanim"
+  },
+  {
+    "id": "ext_b496bc00ca0cb0a33548bdbc",
+    "name": "碎碎念-擦桌碎碎念",
+    "name_en": "Wiping the desk and muttering",
+    "version": 1,
+    "file": "ext_b496bc00ca0cb0a33548bdbc.petanim",
+    "bytes": 13457033,
+    "sha256": "9996ba75386e835e0936f504da2863595d0345caa4ecaa2b0a0641c520be5fc4",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_b496bc00ca0cb0a33548bdbc.petanim"
+  },
+  {
+    "id": "ext_352b41bcdb1f241d401b6e7c",
+    "name": "穿针乞巧",
+    "name_en": "Threading a needle",
+    "version": 1,
+    "file": "ext_352b41bcdb1f241d401b6e7c.petanim",
+    "bytes": 14608975,
+    "sha256": "2b510cf9a0663f5f204bb1f402b57a95a9346005d530940d540fafaa612f5df8",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_352b41bcdb1f241d401b6e7c.petanim"
+  },
+  {
+    "id": "ext_0bd71a19f9d40d5a987905c3",
+    "name": "舞狮头",
+    "name_en": "Lion dance",
+    "version": 1,
+    "file": "ext_0bd71a19f9d40d5a987905c3.petanim",
+    "bytes": 14413232,
+    "sha256": "c2dace5d09e3fcd6cd25c7372a9539c2e3168c229b77581945781c6ad82057c4",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_0bd71a19f9d40d5a987905c3.petanim"
+  },
+  {
+    "id": "ext_40e32c56875aec36313742d7",
+    "name": "荡秋千",
+    "name_en": "Swinging",
+    "version": 1,
+    "file": "ext_40e32c56875aec36313742d7.petanim",
+    "bytes": 14370666,
+    "sha256": "f8168ca29553832fed3f871f1ab2eb778dccb6e3279cc22a1b00eebc2ec290e1",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_40e32c56875aec36313742d7.petanim"
+  },
+  {
+    "id": "ext_9f98e5ee9fbc8be36fe9ffaa",
+    "name": "萌化小幽灵",
+    "name_en": "Little ghost",
+    "version": 1,
+    "file": "ext_9f98e5ee9fbc8be36fe9ffaa.petanim",
+    "bytes": 13148280,
+    "sha256": "ec325224775ff911467d6485697c9590282fb8d0fd8b1e8f39ff2ea8ac7e34cb",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_9f98e5ee9fbc8be36fe9ffaa.petanim"
+  },
+  {
+    "id": "ext_7a123dd31618091fcd866e41",
+    "name": "蓝鲸现世",
+    "name_en": "Blue whale appears",
+    "version": 1,
+    "file": "ext_7a123dd31618091fcd866e41.petanim",
+    "bytes": 14376003,
+    "sha256": "e791fc4674468af13611c4cf489a86284a92a9ea0f66cac179154fa81c3c34ec",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_7a123dd31618091fcd866e41.petanim"
+  },
+  {
+    "id": "ext_82eeeecf2ff9497ef1954a08",
+    "name": "蝴蝶蜜蜂环绕头顶开花",
+    "name_en": "Butterflies, bees and flowers",
+    "version": 1,
+    "file": "ext_82eeeecf2ff9497ef1954a08.petanim",
+    "bytes": 17634535,
+    "sha256": "adbff3ef7e01e728fa491eca349cfe64c856b1e4a226f5c416bce6fc641df211",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_82eeeecf2ff9497ef1954a08.petanim"
+  },
+  {
+    "id": "ext_66d6d4939e89689848cb8bb7",
+    "name": "被吓一跳",
+    "name_en": "Startled",
+    "version": 1,
+    "file": "ext_66d6d4939e89689848cb8bb7.petanim",
+    "bytes": 13543809,
+    "sha256": "a1d1d5e99e44b5bc172d1770a9b19caae1e2cd1ba4cc70b92ae832f458855d18",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_66d6d4939e89689848cb8bb7.petanim"
+  },
+  {
+    "id": "ext_a86f6859ae9b8f8392d9f9c6",
+    "name": "被落叶淹没",
+    "name_en": "Buried in autumn leaves",
+    "version": 1,
+    "file": "ext_a86f6859ae9b8f8392d9f9c6.petanim",
+    "bytes": 16301770,
+    "sha256": "22b5b23febd88fe95bc0de0c7eaab18f567069d60f19b2dc412692e250d500ea",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_a86f6859ae9b8f8392d9f9c6.petanim"
+  },
+  {
+    "id": "ext_4c0f28faf740f86b1155b34c",
+    "name": "装点圣诞树",
+    "name_en": "Decorating a Christmas tree",
+    "version": 1,
+    "file": "ext_4c0f28faf740f86b1155b34c.petanim",
+    "bytes": 20643074,
+    "sha256": "f5ca0a8e18f167a9e13289613a74a633d9df3d9c96eb568a95c4a2ed4640a80b",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4c0f28faf740f86b1155b34c.petanim"
+  },
+  {
+    "id": "ext_cc14487ebe53dc17cd7121d1",
+    "name": "讨糖南瓜灯",
+    "name_en": "Trick-or-treat pumpkin",
+    "version": 1,
+    "file": "ext_cc14487ebe53dc17cd7121d1.petanim",
+    "bytes": 13766612,
+    "sha256": "a31c7f5c592c8fd709e79dad5e0a5289d207b19da0f7274e67dcd84851240e31",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_cc14487ebe53dc17cd7121d1.petanim"
+  },
+  {
+    "id": "ext_177e860897464465e140c4f8",
+    "name": "超大伸懒腰",
+    "name_en": "Big stretch",
+    "version": 1,
+    "file": "ext_177e860897464465e140c4f8.petanim",
+    "bytes": 13449729,
+    "sha256": "b12e6724c24b49c7d3924cbe2abdafae3264cad7609bab16b936b0852203a361",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_177e860897464465e140c4f8.petanim"
+  },
+  {
+    "id": "ext_03b69244bd6b6bb4ac9005ab",
+    "name": "踢毽子",
+    "name_en": "Kicking a shuttlecock",
+    "version": 1,
+    "file": "ext_03b69244bd6b6bb4ac9005ab.petanim",
+    "bytes": 13577071,
+    "sha256": "48ec0cb75fe45d71ca01209a193229dd6afb65c0a37645d23ef14b3c1e35b5ec",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_03b69244bd6b6bb4ac9005ab.petanim"
+  },
+  {
+    "id": "ext_47c8a521c041f295a374dd24",
+    "name": "轻快摇摆舞",
+    "name_en": "Lively swing dance",
+    "version": 1,
+    "file": "ext_47c8a521c041f295a374dd24.petanim",
+    "bytes": 13241316,
+    "sha256": "56e9fb8d3f2a60478e74296d6d34c55db284633ceef84066ae1fa33cc1ac6369",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_47c8a521c041f295a374dd24.petanim"
+  },
+  {
+    "id": "ext_444ddaa71ca431e0c923f5c1",
+    "name": "轻快记录",
+    "name_en": "Taking notes",
+    "version": 1,
+    "file": "ext_444ddaa71ca431e0c923f5c1.petanim",
+    "bytes": 13431843,
+    "sha256": "2ff2370176975242ec2a0f21e75ffb744056796307506ad21e1958df626f5b32",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_444ddaa71ca431e0c923f5c1.petanim"
+  },
+  {
+    "id": "ext_4c23c781ba47ff5b2556644a",
+    "name": "骑木马",
+    "name_en": "Riding a rocking horse",
+    "version": 1,
+    "file": "ext_4c23c781ba47ff5b2556644a.petanim",
+    "bytes": 17368984,
+    "sha256": "5d47a9d7e7ab266c7b4305324f553236dd7e1f6c2d95055dd85f2efdcf309562",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_4c23c781ba47ff5b2556644a.petanim"
+  },
+  {
+    "id": "ext_21f482d8b9067834d291ff62",
+    "name": "鲸鱼吐泡泡特效",
+    "name_en": "Whale bubbles",
+    "version": 1,
+    "file": "ext_21f482d8b9067834d291ff62.petanim",
+    "bytes": 14655207,
+    "sha256": "93d505646a8252033352fdb0e01bd54b571c9acc5b0c780bbeb4b93bf778519d",
+    "url": "https://github.com/1326007879-sys/chatgpt-01/releases/download/v0.1.0-preview.3/ext_21f482d8b9067834d291ff62.petanim"
+  }
+]

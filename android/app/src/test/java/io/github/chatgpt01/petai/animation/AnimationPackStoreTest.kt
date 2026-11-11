@@ -35,6 +35,15 @@ class AnimationPackStoreTest {
     private fun failure(reason: String, run: () -> Unit) {
         try { run(); fail("expected $reason") } catch (e: PackFailure) { assertEquals(reason, e.reason) }
     }
+    @Test fun onlineCatalogIdentityMustMatchBeforeCommit() {
+        val store = AnimationPackStore(tmp.newFolder())
+        failure("invalid") { store.installVerified(archive().inputStream(), { true }, "ext_" + "b".repeat(24), 1) {} }
+        assertTrue(store.list().isEmpty())
+        failure("invalid") { store.installVerified(archive().inputStream(), { true }, id, 2) {} }
+        assertTrue(store.list().isEmpty())
+        store.installVerified(archive().inputStream(), { true }, id, 1) {}
+        assertEquals(id, store.list().single().id)
+    }
     @Test fun installIsPersistentAndOnlyExtensionCanBeDeleted() {
         val root = tmp.newFolder(); val store = AnimationPackStore(root)
         store.install(archive().inputStream(), { it.readBytes().contentEquals(pixels) })
