@@ -163,6 +163,12 @@ class PluginManagementActivity : LocalizedActivity() {
                         response.getAsJsonArray("items")?.forEach { element ->
                             val item = element.asJsonObject
                             SelectionContainer { Text(item["text"].asString) }
+                            TextButton(onClick = {
+                                startActivity(Intent(this@PluginManagementActivity, ReminderActivity::class.java)
+                                    .putExtra("component", entry.component.flattenToString()).putExtra("stamp", entry.stamp)
+                                    .putExtra("text", item["text"].asString))
+                            }, enabled = !busy) { Text(stringResource(R.string.reminder_from_note)) }
+
                             Text(item["id"].asString,style = MaterialTheme.typography.bodySmall)
                             TextButton(onClick = {
                                 val updates = d.operations.flatMap { op -> op.fields.filter { it.id == "id" }.map { op.id+":"+it.id to item["id"].asString } }.toMap()

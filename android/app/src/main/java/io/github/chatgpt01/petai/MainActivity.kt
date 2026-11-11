@@ -83,6 +83,7 @@ class MainActivity : LocalizedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        io.github.chatgpt01.petai.reminders.AndroidReminders.refresh(applicationContext)
         preferences = PetPreferences(this)
         options = preferences.options()
         audioName = resolveAudioName(options.clickSoundUri)
@@ -218,6 +219,11 @@ class MainActivity : LocalizedActivity() {
                         startActivity(Intent(this@MainActivity, io.github.chatgpt01.petai.ui.AnimationManagementActivity::class.java))
                     }, modifier = Modifier.fillMaxWidth().testTag("open_animation_management")) {
                         Text(stringResource(R.string.packs_title))
+                    }
+                    OutlinedButton(onClick = {
+                        startActivity(Intent(this@MainActivity, io.github.chatgpt01.petai.ui.ReminderActivity::class.java))
+                    }, modifier = Modifier.fillMaxWidth().testTag("open_reminders")) {
+                        Text(stringResource(R.string.reminder_title))
                     }
                     SectionTitle(R.string.app_language)
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

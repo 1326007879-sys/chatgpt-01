@@ -57,11 +57,15 @@ class PluginRegistry(private val context: Context) {
         val edit = prefs.edit()
         if (enabled) edit.putString(entry.component.flattenToString(),entry.stamp) else edit.remove(entry.component.flattenToString())
         if (!edit.commit()) throw PluginFailure("SAVE")
+        if (enabled) io.github.chatgpt01.petai.reminders.AndroidReminders.refresh(context)
+        else io.github.chatgpt01.petai.reminders.AndroidReminders.revokeComponent(context, entry.component.flattenToString())
     }
     fun disablePackage(packageName: String) {
         val edit = prefs.edit()
-        prefs.all.keys.filter { ComponentName.unflattenFromString(it)?.packageName == packageName }.forEach { edit.remove(it) }
+        val revoked = prefs.all.keys.filter { ComponentName.unflattenFromString(it)?.packageName == packageName }
+        revoked.forEach { edit.remove(it) }
         if (!edit.commit()) throw PluginFailure("SAVE")
+        revoked.forEach { io.github.chatgpt01.petai.reminders.AndroidReminders.revokeComponent(context, it) }
     }
     fun verify(entry: PluginEntry) { if (!enabled(entry) || stamp(entry.component) != entry.stamp) throw PluginFailure("CHANGED") }
 }
