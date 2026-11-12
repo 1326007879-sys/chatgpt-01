@@ -2,6 +2,10 @@
 
 准备下一次更新、制定开发计划或发布新版本前，先向用户展示本清单中的待确认需求。清单只记录需求，不代表已实现或已承诺交付。
 
+## 当前工作区已接续交接提交
+
+已同步c3ee99bd6a6f4220440c6ab477dfd9e5f81fc326并独立复核197项JVM、13项Python、ruff、lint及宿主/引擎构建与四包签名。设备验收和听感仍未通过；此前Qwen下载403已不再复现，原候选音频未同步。详见 [当前工作区核验](implementation/VOICE-PLUGIN-LOCAL-VERIFICATION.md)。
+
 ## 最新音色要求与下载阻碍
 
 本次源码交接目标：`handoff/voice-plugin-current`。用户已授权提交并推送当前源码、文档和测试，排除模型、音频、安装包、密钥与缓存；不合并 main，不发布新版本。下文“未推送”为交接前的历史核对状态，交接安排见 docs/implementation/VOICE-PLUGIN-RESUMPTION.md。
