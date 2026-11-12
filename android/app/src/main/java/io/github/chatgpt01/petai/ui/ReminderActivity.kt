@@ -90,6 +90,14 @@ class ReminderActivity : LocalizedActivity() {
     }
     override fun onDestroy() { scope.cancel(); super.onDestroy() }
     @Composable private fun Page() {
+        val diagnosticPrefs = remember { getSharedPreferences("reminder_status", MODE_PRIVATE) }
+        DisposableEffect(diagnosticPrefs) {
+            val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+                runOnUiThread { if (!isDestroyed) refreshTick++ }
+            }
+            diagnosticPrefs.registerOnSharedPreferenceChangeListener(listener)
+            onDispose { diagnosticPrefs.unregisterOnSharedPreferenceChangeListener(listener) }
+        }
         if (!initial) {
             Column(Modifier.fillMaxSize().safeDrawingPadding().padding(20.dp)) {
                 TextButton(onClick = { finish() }) { Text(stringResource(R.string.back)) }
@@ -128,7 +136,7 @@ class ReminderActivity : LocalizedActivity() {
                 ?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toString() }
                 ?: getString(R.string.reminder_diagnostic_none)
             Text(stringResource(R.string.reminder_diagnostics,
-                diagnosticTime("scheduled_at"), diagnosticTime("receiver_at"), diagnosticTime("delivered_at")))
+                diagnosticTime("scheduled_at"), diagnosticTime("receiver_at"), diagnosticTime("delivered_at")), Modifier.testTag("reminder_diagnostics"))
             val error = getSharedPreferences("reminder_status", MODE_PRIVATE).getString("error", null)
             if (error != null) Text(error)
             if (notice.isNotEmpty()) Text(notice, Modifier.testTag("reminder_notice"))

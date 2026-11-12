@@ -114,4 +114,21 @@ class ReminderDeliveryDeviceTest {
         }
     }
 
+    @Test fun diagnosticUpdatesWhileReminderPageRemainsOpen() {
+        compose.waitUntil(20000) { compose.onAllNodesWithTag("reminder_diagnostics").fetchSemanticsNodes().isNotEmpty() }
+        val prefs=compose.activity.getSharedPreferences("reminder_status",android.content.Context.MODE_PRIVATE)
+        val existed=prefs.contains("delivered_at");val previous=prefs.getLong("delivered_at",0)
+        val stamp=java.time.Instant.parse("2001-01-01T01:02:03Z").toEpochMilli()
+        val expected=java.time.Instant.ofEpochMilli(stamp).atZone(java.time.ZoneId.systemDefault()).toString()
+        try {
+            assertTrue(prefs.edit().putLong("delivered_at",stamp).commit())
+            compose.waitUntil(20000) {
+                compose.onAllNodes(hasTestTag("reminder_diagnostics") and hasText(expected,substring=true)).fetchSemanticsNodes().isNotEmpty()
+            }
+        } finally {
+            val edit=prefs.edit();if(existed) edit.putLong("delivered_at",previous) else edit.remove("delivered_at")
+            assertTrue(edit.commit())
+        }
+    }
+
 }
