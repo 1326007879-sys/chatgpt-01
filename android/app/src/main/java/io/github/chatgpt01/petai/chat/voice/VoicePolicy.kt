@@ -64,6 +64,10 @@ class SpeechPlayback {
 }
 
 object VoiceSelection {
+    /** A deleted explicitly selected neural voice must fail rather than read in a new voice. */
+    fun engineReady(requestedEngine: String?, savedName: String?, savedEngine: String?, currentEngine: String?,
+                    available: Set<String>): Boolean = requestedEngine != NeuralEngine.PACKAGE ||
+        (available.isNotEmpty() && (savedName==null || savedEngine!=currentEngine || savedName in available))
     fun resolve(savedName: String?, savedEngine: String?, currentEngine: String?, available: Set<String>): String? =
         savedName?.takeIf { savedEngine == currentEngine && it in available }
 }

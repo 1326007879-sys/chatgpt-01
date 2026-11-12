@@ -1,6 +1,8 @@
 # 构建与检查
 
 最低 Android 8.0/API26；编译/目标 SDK36，Build Tools35.0.0，JDK17、Gradle8.11.1（仓库 wrapper 校验 SHA256），Python3.12。
+
+构建新增独立音色引擎前，先执行 `python scripts/prepare_voice_engine.py runtime` 下载并校验固定官方 AAR。应用/插件全量构建包含该模块；仅构建宿主可使用 `:app:` 任务前缀。引擎资源格式、研究限制和使用方法见 [VOICE_ENGINE.md](VOICE_ENGINE.md)。
 SDK 用 Android Studio 或官方命令行工具安装，配置 ANDROID_HOME/JAVA_HOME；接受官方 SDK 许可。
 
 ```sh

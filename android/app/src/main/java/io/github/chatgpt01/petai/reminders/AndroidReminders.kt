@@ -20,15 +20,20 @@ object AndroidReminders {
     val HOST = ReminderOwner("host", "v1")
     private const val CHANNEL = "reminders_v1"
     fun store(c: Context) = ReminderStore(c.noBackupFilesDir.toPath().resolve("reminders/items.json"))
-    fun coordinator(c: Context) = ReminderCoordinator(store(c)) { at ->
+    fun coordinator(c: Context) = ReminderCoordinator(store(c)) { at -> replaceWakeup(c, at) }
+    private fun replaceWakeup(c: Context, at: Long?, preferExact: Boolean = true) {
         val alarm = c.getSystemService(AlarmManager::class.java)
         val pending = PendingIntent.getBroadcast(c, 0, Intent(c, ReminderReceiver::class.java).setAction("pet.reminders.WAKE"),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        var exact = false
         if (at == null) alarm.cancel(pending)
-        else if (Build.VERSION.SDK_INT < 31 || alarm.canScheduleExactAlarms()) {
-            try { alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending) }
+        else if (preferExact && (Build.VERSION.SDK_INT < 31 || alarm.canScheduleExactAlarms())) {
+            try { alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending); exact = true }
             catch (_: SecurityException) { alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending) }
         } else alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending)
+        c.getSharedPreferences("reminder_status", Context.MODE_PRIVATE).edit()
+            .putLong("scheduled_at", at ?: 0L)
+            .putBoolean("exact", exact).apply()
     }
     fun authorized(c: Context, owner: ReminderOwner): Boolean {
         if (owner == HOST) return true
@@ -67,9 +72,7 @@ object AndroidReminders {
     fun recover(c: Context) {
         status(c, AppLanguage.wrap(c).getString(R.string.reminder_schedule_error))
         runCatching {
-            val alarm = c.getSystemService(AlarmManager::class.java)
-            val pending = PendingIntent.getBroadcast(c, 0, Intent(c, ReminderReceiver::class.java).setAction("pet.reminders.WAKE"), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 15 * 60_000, pending)
+            replaceWakeup(c, System.currentTimeMillis() + 15 * 60_000, preferExact = false)
         }
     }
     fun status(c: Context, error: String?) {
@@ -88,9 +91,6 @@ object AndroidReminders {
         if (deliver && !ready(c)) {
             // Preserve pending reminders, retry after a bounded delay; show the permission issue in UI.
             if (engine.due(now) { allowed[it] == true }.isNotEmpty()) {
-                val alarm = c.getSystemService(AlarmManager::class.java)
-                val p = PendingIntent.getBroadcast(c, 0, Intent(c, ReminderReceiver::class.java).setAction("pet.reminders.WAKE"), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, now + 15 * 60_000, p)
                 throw IllegalStateException("notifications disabled")
             }
         }
@@ -99,6 +99,8 @@ object AndroidReminders {
                 var spoken: Reminder? = null
                 engine.deliver(token, now, { authorized(c, it) }) { row ->
                     post(c, row, now - token.at > 15 * 60_000)
+                    c.getSharedPreferences("reminder_status", Context.MODE_PRIVATE).edit()
+                        .putLong("delivered_at", now).apply()
                     if (row.draft.speak && now - token.at <= 15 * 60_000) spoken = row
                 }
                 spoken?.let { row ->
@@ -131,6 +133,8 @@ object AndroidReminders {
 
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        context.getSharedPreferences("reminder_status", Context.MODE_PRIVATE).edit()
+            .putLong("receiver_at", System.currentTimeMillis()).apply()
         val pending = goAsync()
         AndroidReminders.worker.execute {
             try {

@@ -23,3 +23,6 @@ dist/
 # Generated independent animation packages
 *.petanim
 *.petanim.tmp
+android/voice-engine/libs/*.aar
+*.petvoice
+*.petmodel

@@ -52,10 +52,19 @@ class ReminderDeliveryDeviceTest {
         }
     }
     @Test fun exactAlarmWakesReceiverAndPostsNotification() {
+        platformAlarmWakesReceiver(exact = true)
+    }
+
+    @Test fun inexactAlarmWakesReceiverWithoutExactPermission() {
+        platformAlarmWakesReceiver(exact = false)
+    }
+
+    private fun platformAlarmWakesReceiver(exact: Boolean) {
         val context = compose.activity.applicationContext
         val alarm = context.getSystemService(android.app.AlarmManager::class.java)
         Assume.assumeTrue(AndroidReminders.ready(context))
-        Assume.assumeTrue(android.os.Build.VERSION.SDK_INT < 31 || alarm.canScheduleExactAlarms())
+        val allowed = android.os.Build.VERSION.SDK_INT < 31 || alarm.canScheduleExactAlarms()
+        Assume.assumeTrue(allowed == exact)
         val id = "alarm-test-" + UUID.randomUUID()
         val engine = AndroidReminders.coordinator(context)
         try {
@@ -63,9 +72,12 @@ class ReminderDeliveryDeviceTest {
                 val now = System.currentTimeMillis()
                 engine.save(id,AndroidReminders.HOST,ReminderDraft("alarm receiver test",now+5000,"UTC"),now)
                 AndroidReminders.process(context,false)
+                val diagnostics = context.getSharedPreferences("reminder_status", android.content.Context.MODE_PRIVATE)
+                assertEquals(now + 5000, diagnostics.getLong("scheduled_at", 0))
+                assertEquals(exact, diagnostics.getBoolean("exact", !exact))
             }.get(20,TimeUnit.SECONDS)
             val manager = context.getSystemService(NotificationManager::class.java)
-            compose.waitUntil(60000) { manager.activeNotifications.any { it.tag == id } }
+            compose.waitUntil(if (exact) 60000 else 180000) { manager.activeNotifications.any { it.tag == id } }
             AndroidReminders.worker.submit {
                 assertNull(engine.list(AndroidReminders.HOST).single { it.id == id }.nextAt)
             }.get(20,TimeUnit.SECONDS)

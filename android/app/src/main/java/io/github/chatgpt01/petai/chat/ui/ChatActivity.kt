@@ -54,6 +54,7 @@ class ChatActivity : LocalizedActivity() {
     private var foreground by mutableStateOf(false)
     override fun onStart() {
         super.onStart()
+        if (::speech.isInitialized && !speech.state.value.loading) speech.refresh()
         boundConversation?.let { readTracker.baseline(it.state.value.session.messages) }
         foreground = true
     }
@@ -108,14 +109,16 @@ class ChatActivity : LocalizedActivity() {
                     }
                     if (voiceSettingsOpen) VoiceSettingsScreen(speechState, speech::autoRead, speech::select,
                         { speech.speak(getString(R.string.voice_sample)) }, speech::stop,
-                        { speech.stop(); voiceSettingsOpen = false })
+                        { speech.stop(); voiceSettingsOpen = false }, onEngine=speech::selectEngine,
+                        onManageEngine={ speech.stop(); runCatching { startActivity(android.content.Intent().setClassName(
+                            io.github.chatgpt01.petai.chat.voice.NeuralEngine.PACKAGE,"io.github.chatgpt01.voice.EngineActivity")) } })
                     else ChatScreen(state, input, { ready.second.edit(it) },
                         { speech.stop(); ready.second.send() },
                         { speech.stop(); state.generation.requestId?.let(ready.first::stop) },
                         { speech.stop(); ready.second.retry(it) },
                         { speech.stop(); runtime.settingsUi.load(); settingsOpen = true }, { finish() },
                         speechState,
-                        { speech.stop(); voiceSettingsOpen = true }, speech::speak, speech::stop)
+                        { speech.refresh(); voiceSettingsOpen = true }, speech::speak, speech::stop)
                     if (settingsOpen) ModelSettingsDialog(runtime.settingsUi) { settingsOpen = false }
                 }
             }

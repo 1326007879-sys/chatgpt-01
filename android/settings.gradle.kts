@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Chatgpt01PetAI"
 include(":app", ":plugin-notes", ":plugin-fault")
+include(":voice-engine")

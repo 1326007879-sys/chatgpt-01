@@ -74,7 +74,7 @@
     <string name="plugins_scope">后续将在此提供插件接入与管理。当前不会搜索、安装或加载插件。</string>
     <string name="voice_back">返回聊天</string>
     <string name="voice_settings">语音设置</string>
-    <string name="voice_privacy">回复朗读由设备的系统语音引擎处理，部分音色可能联网。键盘语音输入由你选择的输入法处理，本应用不录音。</string>
+    <string name="voice_privacy">仅向选定的语音引擎发送本次朗读文字。系统音色可能联网；独立离线引擎在本机合成。键盘语音输入由你选择的输入法处理，本应用不录音。</string>
     <string name="voice_auto_read">自动朗读新回复</string>
     <string name="voice_auto_hint">默认关闭。开启后仅在当前聊天页朗读新完成的回复；历史、失败或中断回复不会自动朗读。离开聊天或进入后台即停止，不自动续播。</string>
     <string name="voice_preview">试听音色</string>
@@ -216,6 +216,15 @@
     <string name="reminder_hint">设置日期和时间后保存。提醒内容独立保存；删除原便签不会删除已设置的提醒。</string>
     <string name="reminder_schedule_error">提醒调度未完成，请打开提醒页检查通知权限并重试。</string>
     <string name="reminder_saved">已保存并重新安排提醒。</string>
+    <string name="reminder_neural">使用独立离线音色引擎（需安装、导入音色并启用；失败时仍保留通知）</string>
+    <string name="voice_engine_choice">朗读引擎</string>
+    <string name="voice_system_engine">设备系统默认引擎</string>
+    <string name="voice_neural_engine">独立离线音色引擎</string>
+    <string name="voice_manage_engine">管理离线音色</string>
+    <string name="voice_neural_hint">离线引擎需单独安装同签名的插件、导入模型和音色并启用。仅向选定引擎发送本次朗读文字。新音色仍待试听验收。</string>
+    <string name="voice_neural_unavailable">离线音色引擎未就绪。请检查安装、签名、模型、音色及启用状态；不会自动换用其他音色。</string>
+    <string name="reminder_diagnostic_none">暂无记录</string>
+    <string name="reminder_diagnostics">调度记录：%1$s\n最近唤醒：%2$s\n最近通知投递：%3$s\n记录用于排查；通知投递不代表用户已看到或听到。</string>
     <string name="reminder_save_error">操作未完成。请检查日期、时间、插件授权及存储；若已保存，请重新进入页面恢复调度。</string>
     <string name="reminder_speech_error">语音播报失败，文字通知仍可查看。</string>
     <string name="reminder_allow_notifications">允许提醒通知</string>
@@ -228,7 +237,7 @@
     <string name="reminder_zone">固定时区：%1$s</string>
     <string name="reminder_daily">每天重复</string>
     <string name="reminder_speak">到点语音播报</string>
-    <string name="reminder_voice_hint">使用聊天设置中选择的系统音色。锁屏时不自动朗读；后台限制可能阻止播报，可点击通知中的朗读。系统音色可能需要联网。</string>
+    <string name="reminder_voice_hint">使用所选引擎的可用音色。锁屏时不自动朗读；后台限制可能阻止播报，可点击通知中的朗读。系统音色可能联网；离线引擎失败时不会自动换音色，通知仍保留。</string>
     <string name="reminder_save">保存提醒</string>
     <string name="reminder_new">新建提醒</string>
     <string name="reminder_list">已保存的提醒</string>

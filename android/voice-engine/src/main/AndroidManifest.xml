@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <permission android:name="io.github.chatgpt01.permission.NEURAL_VOICE" android:protectionLevel="signature" />
+    <application android:allowBackup="false" android:label="桌宠离线音色·研究版" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name=".EngineActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".NeuralVoiceService" android:process=":synthesis" android:exported="true" android:permission="io.github.chatgpt01.permission.NEURAL_VOICE">
+            <intent-filter><action android:name="android.intent.action.TTS_SERVICE" /></intent-filter>
+            <meta-data android:name="android.speech.tts" android:resource="@xml/tts_engine" />
+        </service>
+    </application>
+</manifest>

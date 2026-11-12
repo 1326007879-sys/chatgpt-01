@@ -1,0 +1,13 @@
+Chatgpt01 independent offline voice engine, research build.
+
+The APK includes the official sherpa-onnx 2.0.1 Android runtime from
+https://github.com/k2-fsa/sherpa-onnx/releases/tag/v2.0.1
+SHA256 a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7
+Sherpa-onnx: Apache License 2.0; see LICENSE-sherpa-onnx.txt.
+ONNX Runtime: MIT License; see LICENSE-onnxruntime.txt.
+Kotlin standard library and Google Gson are licensed under Apache License 2.0.
+
+No speech model, character asset or reference recording is bundled in this APK.
+Model and voice packs require their own source and rights statements.
+The complete native dependency inventory and distribution review is pending;
+this research build has not been cleared for a public release.

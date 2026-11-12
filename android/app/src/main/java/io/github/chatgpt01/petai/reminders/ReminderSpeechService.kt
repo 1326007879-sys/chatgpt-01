@@ -15,8 +15,10 @@ interface ReminderVoiceProvider : AutoCloseable {
     suspend fun speak(text: String, voiceId: String)
     fun stop()
 }
-class SystemReminderVoice(context: Context) : ReminderVoiceProvider {
-    private val output = SystemSpeechOutput(context)
+class SystemReminderVoice(context: Context, provider: String = "system", voiceId: String = "") : ReminderVoiceProvider {
+    private val output = SystemSpeechOutput(context, useSavedEngine=false,
+        enginePackage=if(provider=="neural") io.github.chatgpt01.petai.chat.voice.NeuralEngine.PACKAGE else null,
+        requestedVoice=voiceId.takeIf { it.isNotEmpty() })
     override suspend fun speak(text: String, voiceId: String) {
         withTimeout((text.length * 250L + 10_000).coerceIn(40_000L, 240_000L)) {
             val ready = output.state.first { !it.loading }
@@ -71,8 +73,7 @@ class ReminderSpeechService : Service() {
                                 getSystemService(KeyguardManager::class.java).isDeviceLocked,
                                 getSystemService(android.media.AudioManager::class.java).ringerMode == android.media.AudioManager.RINGER_MODE_NORMAL,
                                 nm.currentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL)) continue
-                        check(row.draft.voiceProvider == "system")
-                        val provider = SystemReminderVoice(this@ReminderSpeechService)
+                        val provider = SystemReminderVoice(this@ReminderSpeechService,row.draft.voiceProvider,row.draft.voiceId)
                         voice = provider
                         provider.speak(row.draft.text, row.draft.voiceId)
                     } catch (e: CancellationException) { throw e }

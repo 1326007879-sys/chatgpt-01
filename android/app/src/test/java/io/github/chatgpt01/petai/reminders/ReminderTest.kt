@@ -10,6 +10,13 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class ReminderTest {
+    @Test fun neuralProviderPersistsAndArbitraryProvidersAreRejected() = fixture { store, c, _ ->
+        val neural = ReminderDraft("试听提醒",10000,"Asia/Shanghai",speak=true,voiceProvider="neural",voiceId="petai.neural.candidate")
+        c.save("neural",owner,neural,1)
+        assertEquals(neural,store.transaction { it.single().draft })
+        rejected { neural.copy(voiceProvider="untrusted/component") }
+        rejected { neural.copy(voiceId="system.voice") }
+    }
     private val owner = ReminderOwner("notes/service", "certificate-and-grant-1")
     private val other = ReminderOwner("notes/service", "certificate-and-grant-2")
     private fun at(text: String) = Instant.parse(text).toEpochMilli()

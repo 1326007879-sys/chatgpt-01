@@ -5,6 +5,19 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class VoicePolicyTest {
+    @Test fun deletedNeuralVoiceFailsInsteadOfAutomaticallyUsingAnotherVoice() {
+        val neural=NeuralEngine.PACKAGE
+        val available=setOf("petai.neural.new")
+        assertFalse(VoiceSelection.engineReady(neural,"petai.neural.deleted",neural,neural,available))
+        assertFalse(VoiceSelection.engineReady(neural,null,null,neural,emptySet()))
+        assertTrue(VoiceSelection.engineReady(neural,"system-voice","system-engine",neural,available))
+        assertTrue(VoiceSelection.engineReady(null,"deleted-system-voice","system-engine","system-engine",setOf("default")))
+    }
+    @Test fun neuralEngineCannotAcceptAnAutomaticFallbackSystemVoice() {
+        assertFalse(NeuralEngine.accepts(NeuralEngine.PACKAGE,"zh-cn-system"))
+        assertTrue(NeuralEngine.accepts(NeuralEngine.PACKAGE,"petai.neural.candidate"))
+        assertTrue(NeuralEngine.accepts(null,"zh-cn-system"))
+    }
     private fun reply(id: String, status: MessageStatus = MessageStatus.COMPLETED) =
         ChatMessage(id, MessageRole.ASSISTANT, if (status == MessageStatus.REQUESTING) "" else "你好", 1, status)
 

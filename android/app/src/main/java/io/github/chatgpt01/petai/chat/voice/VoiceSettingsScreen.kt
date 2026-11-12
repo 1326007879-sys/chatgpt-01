@@ -17,7 +17,8 @@ import io.github.chatgpt01.petai.R
 
 @Composable
 fun VoiceSettingsScreen(state: SpeechUiState, onAutoRead: (Boolean) -> Unit, onSelect: (String?) -> Unit,
-                        onPreview: () -> Unit, onStop: () -> Unit, onBack: () -> Unit) {
+                        onPreview: () -> Unit, onStop: () -> Unit, onBack: () -> Unit,
+                        onEngine: (String?) -> Unit = {}, onManageEngine: () -> Unit = {}) {
     BackHandler(onBack = onBack)
     LazyColumn(Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 20.dp)
         .testTag("voice_settings"), contentPadding = PaddingValues(vertical = 12.dp),
@@ -25,6 +26,14 @@ fun VoiceSettingsScreen(state: SpeechUiState, onAutoRead: (Boolean) -> Unit, onS
         item { TextButton(onClick = onBack) { Text(stringResource(R.string.voice_back)) } }
         item { Text(stringResource(R.string.voice_settings), style = MaterialTheme.typography.headlineSmall) }
         item { Text(stringResource(R.string.voice_privacy)) }
+        item {
+            Text(stringResource(R.string.voice_engine_choice))
+            VoiceRow(stringResource(R.string.voice_system_engine), state.enginePackage==null, !state.loading) { onEngine(null) }
+            VoiceRow(stringResource(R.string.voice_neural_engine), state.enginePackage==NeuralEngine.PACKAGE,
+                !state.loading && state.neuralAvailable) { onEngine(NeuralEngine.PACKAGE) }
+            Text(stringResource(R.string.voice_neural_hint), style=MaterialTheme.typography.bodySmall)
+            if (state.neuralAvailable) TextButton(onClick=onManageEngine) { Text(stringResource(R.string.voice_manage_engine)) }
+        }
         item {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.voice_auto_read), Modifier.weight(1f))

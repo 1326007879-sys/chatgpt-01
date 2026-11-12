@@ -107,6 +107,7 @@ class ReminderActivity : LocalizedActivity() {
         var time by rememberSaveable(key) { mutableStateOf(row?.draft?.let { if (it.repeat == ReminderRepeat.DAILY) it.localTime else Instant.ofEpochMilli(it.firstAt).atZone(ZoneId.of(it.zoneId)).toLocalTime().toString().take(5) } ?: suggested.toLocalTime().toString().take(5)) }
         var daily by rememberSaveable(key) { mutableStateOf(row?.draft?.repeat == ReminderRepeat.DAILY) }
         var speak by rememberSaveable(key) { mutableStateOf(row?.draft?.speak ?: false) }
+        var neural by rememberSaveable(key) { mutableStateOf(row?.draft?.voiceProvider == "neural") }
         val zone = row?.draft?.zoneId ?: ZoneId.systemDefault().id
         val requestPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { refreshTick++ }
         // Read on each resume/permission callback; this state is deliberately not cached across settings changes.
@@ -122,6 +123,12 @@ class ReminderActivity : LocalizedActivity() {
             }) { Text(stringResource(R.string.reminder_allow_notifications)) }
             if (!exact) OutlinedButton(onClick = { runCatching { startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))) } }) { Text(stringResource(R.string.reminder_allow_exact)) }
             Text(stringResource(if (exact) R.string.reminder_exact_status else R.string.reminder_inexact_status))
+            val diagnostics = getSharedPreferences("reminder_status", MODE_PRIVATE)
+            fun diagnosticTime(key: String): String = diagnostics.getLong(key, 0L).takeIf { it > 0 }
+                ?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toString() }
+                ?: getString(R.string.reminder_diagnostic_none)
+            Text(stringResource(R.string.reminder_diagnostics,
+                diagnosticTime("scheduled_at"), diagnosticTime("receiver_at"), diagnosticTime("delivered_at")))
             val error = getSharedPreferences("reminder_status", MODE_PRIVATE).getString("error", null)
             if (error != null) Text(error)
             if (notice.isNotEmpty()) Text(notice, Modifier.testTag("reminder_notice"))
@@ -141,6 +148,7 @@ class ReminderActivity : LocalizedActivity() {
             Text(stringResource(R.string.reminder_zone, zone))
             Row { Checkbox(daily, { daily = it }, enabled = !busy); Text(stringResource(R.string.reminder_daily)) }
             Row { Checkbox(speak, { speak = it }, enabled = !busy); Text(stringResource(R.string.reminder_speak)) }
+            if (speak) Row { Checkbox(neural, { neural=it }, enabled=!busy); Text(stringResource(R.string.reminder_neural)) }
             Text(stringResource(R.string.reminder_voice_hint))
             Button(enabled = !busy && permissionsReady, onClick = {
                 val owner = row?.owner ?: intent.getStringExtra("component")?.let { component ->
@@ -152,7 +160,9 @@ class ReminderActivity : LocalizedActivity() {
                     val local = LocalDate.parse(date).atTime(LocalTime.parse(time))
                     val now = System.currentTimeMillis()
                     val draft = ReminderDraft(text, local.atZone(ZoneId.of(zone)).toInstant().toEpochMilli(), zone,
-                        if (daily) ReminderRepeat.DAILY else ReminderRepeat.ONCE, time, speak)
+                        if (daily) ReminderRepeat.DAILY else ReminderRepeat.ONCE, time, speak,
+                        voiceProvider=if(neural) "neural" else "system",
+                        voiceId=row?.draft?.takeIf { it.voiceProvider==(if(neural) "neural" else "system") }?.voiceId.orEmpty())
                     AndroidReminders.coordinator(applicationContext).save(id, owner, draft, now)
                     AndroidReminders.cancelNotification(applicationContext, id)
                     stopService(Intent(this@ReminderActivity, ReminderSpeechService::class.java))

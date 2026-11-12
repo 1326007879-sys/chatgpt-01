@@ -24,10 +24,13 @@ data class SpeechUiState(
     val voices: List<SystemVoiceOption> = emptyList(),
     val speaking: Boolean = false,
     val notice: String? = null,
+    val enginePackage: String? = null,
+    val neuralAvailable: Boolean = false,
 )
 
 /** Owned by a ChatActivity; all platform callbacks are marshalled onto its main thread. */
-class SystemSpeechOutput(context: Context) : AutoCloseable {
+class SystemSpeechOutput(context: Context, useSavedEngine: Boolean = true, enginePackage: String? = null,
+                         private val requestedVoice: String? = null) : AutoCloseable {
     private val app = context.applicationContext
     private val handler = Handler(Looper.getMainLooper())
     private val prefs = app.getSharedPreferences("chat_voice", Context.MODE_PRIVATE)
@@ -39,20 +42,53 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
     private var defaultSupported = false
     private var focus: AudioFocusRequest? = null
     private var tts: TextToSpeech? = null
+    private var selectedEngine = if (useSavedEngine) prefs.getString("engine_package",null) else enginePackage
+    private var initTicket = 0L
+    private var timeout: Runnable? = null
+    private var initTimeout: Runnable? = null
     private val mutable = MutableStateFlow(SpeechUiState(autoRead = prefs.getBoolean("auto_read", false)))
     val state = mutable.asStateFlow()
 
-    init {
+    init { initialize() }
+    private fun initialize() {
+        initTimeout?.let(handler::removeCallbacks); initTimeout=null
+        val ticket = ++initTicket
+        stop(); tts?.shutdown(); tts=null
+        mutable.value = mutable.value.copy(loading=true,ready=false,canSpeak=false,voices=emptyList(),selected=null,
+            enginePackage=selectedEngine,neuralAvailable=NeuralEngine.trusted(app),notice=null)
+        if (selectedEngine != null && (selectedEngine != NeuralEngine.PACKAGE || !NeuralEngine.trusted(app))) {
+            mutable.value=mutable.value.copy(loading=false,notice=text(R.string.voice_neural_unavailable)); return
+        }
+        initTimeout = Runnable {
+            if (!closed && ticket==initTicket && mutable.value.loading) {
+                initTicket++; tts?.shutdown(); tts=null
+                mutable.value=mutable.value.copy(loading=false,ready=false,canSpeak=false,
+                    notice=text(if(selectedEngine==NeuralEngine.PACKAGE) R.string.voice_neural_unavailable else R.string.voice_engine_missing))
+            }
+        }.also { handler.postDelayed(it,20000L) }
         try {
-            tts = TextToSpeech(app) { status -> handler.post { initialized(status) } }
+            tts = TextToSpeech(app, { status -> handler.post { if (ticket==initTicket) initialized(status) } }, selectedEngine)
         } catch (_: RuntimeException) {
+            initTimeout?.let(handler::removeCallbacks); initTimeout=null
             mutable.value = mutable.value.copy(loading = false, notice = text(R.string.voice_engine_missing))
         }
     }
 
+    fun selectEngine(name: String?) {
+        if (closed || (name != null && (name!=NeuralEngine.PACKAGE || !NeuralEngine.trusted(app)))) return
+        if (!prefs.edit().putString("engine_package",name).remove("voice_name").remove("voice_engine").commit()) {
+            mutable.value=mutable.value.copy(notice=text(R.string.voice_save_failed)); return
+        }
+        selectedEngine=name
+        initialize()
+    }
+
+    fun refresh() { if (!closed) initialize() }
+
     private fun text(id: Int) = io.github.chatgpt01.petai.AppLanguage.wrap(app).getString(id)
     private fun initialized(status: Int) {
         if (closed) return
+        initTimeout?.let(handler::removeCallbacks); initTimeout=null
         val engine = tts
         if (status != TextToSpeech.SUCCESS || engine == null) {
             mutable.value = mutable.value.copy(loading = false, notice = text(R.string.voice_engine_missing))
@@ -62,17 +98,22 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
             engine.setAudioAttributes(attributes)
             defaultSupported = engine.setLanguage(Locale.SIMPLIFIED_CHINESE) >= TextToSpeech.LANG_AVAILABLE
             val voices = engine.voices.orEmpty().filter {
-                !it.features.orEmpty().contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED)
+                !it.features.orEmpty().contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED) && NeuralEngine.accepts(selectedEngine,it.name)
             }.sortedWith(compareBy({ it.locale.language != "zh" }, { it.locale.toLanguageTag() }, { it.name }))
                 .map { SystemVoiceOption(it.name, it.locale.toLanguageTag(), it.isNetworkConnectionRequired) }
                 .distinctBy { it.name }
-            val saved = prefs.getString("voice_name", null)
-            val selected = VoiceSelection.resolve(saved, prefs.getString("voice_engine", null),
-                engine.defaultEngine, voices.map { it.name }.toSet())
+            val currentEngine = selectedEngine ?: engine.defaultEngine
+            val saved = requestedVoice ?: prefs.getString("voice_name", null)
+            val savedEngine = if (requestedVoice!=null) currentEngine else prefs.getString("voice_engine", null)
+            val selected = VoiceSelection.resolve(saved, savedEngine,
+                currentEngine, voices.map { it.name }.toSet())
+            if (!VoiceSelection.engineReady(selectedEngine,saved,savedEngine,currentEngine,voices.map { it.name }.toSet())) {
+                mutable.value=mutable.value.copy(loading=false,notice=text(R.string.voice_neural_unavailable)); return
+            }
             mutable.value = mutable.value.copy(loading = false, ready = true, voices = voices,
-                selected = selected, canSpeak = selected != null || defaultSupported,
+                selected = selected, canSpeak = (requestedVoice==null || selected!=null) && (selected != null || defaultSupported),
                 notice = when {
-                    saved != null && selected == null -> text(R.string.voice_missing_fallback)
+                    saved != null && selected == null && (selectedEngine!=NeuralEngine.PACKAGE || savedEngine==currentEngine) -> text(R.string.voice_missing_fallback)
                     !defaultSupported && selected == null -> text(R.string.voice_chinese_missing)
                     else -> null
                 })
@@ -122,7 +163,7 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
         if (closed || !mutable.value.ready) return
         if (name != null && mutable.value.voices.none { it.name == name }) return
         // A failed write must leave the current voice selection unchanged.
-        if (!prefs.edit().putString("voice_name", name).putString("voice_engine", tts?.defaultEngine).commit()) {
+        if (!prefs.edit().putString("voice_name", name).putString("voice_engine", selectedEngine ?: tts?.defaultEngine).commit()) {
             mutable.value = mutable.value.copy(notice = text(R.string.voice_save_failed)); return
         }
         stop()
@@ -142,11 +183,17 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
         val engine = tts ?: return
         try {
             val selected = mutable.value.selected
-            val applied = if (selected == null) engine.setLanguage(Locale.SIMPLIFIED_CHINESE)
+            if (selectedEngine==NeuralEngine.PACKAGE) {
+                check(NeuralEngine.trusted(app))
+                check(engine.voices.orEmpty().any { NeuralEngine.accepts(selectedEngine,it.name) })
+            }
+            val applied = if (selected == null && selectedEngine==NeuralEngine.PACKAGE)
+                engine.defaultVoice?.takeIf { NeuralEngine.accepts(selectedEngine,it.name) }?.let(engine::setVoice) ?: TextToSpeech.ERROR
+                else if (selected == null) engine.setLanguage(Locale.SIMPLIFIED_CHINESE)
                 else engine.voices.orEmpty().firstOrNull { it.name == selected }?.let(engine::setVoice)
                     ?: TextToSpeech.ERROR
             if (applied < 0) { mutable.value = mutable.value.copy(notice = this.text(R.string.voice_play_failed)); return }
-            val chunks = VoiceText.chunks(text, TextToSpeech.getMaxSpeechInputLength())
+            val chunks = VoiceText.chunks(text, if(selectedEngine==NeuralEngine.PACKAGE) 200 else TextToSpeech.getMaxSpeechInputLength())
             val batch = playback.begin(chunks.size)
             val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
                 .setAudioAttributes(attributes)
@@ -157,6 +204,9 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
             }
             focus = request
             mutable.value = mutable.value.copy(speaking = true, notice = null)
+            timeout = Runnable {
+                if (playback.current(batch.ticket)) { stop(); mutable.value=mutable.value.copy(notice=this.text(R.string.voice_play_failed)) }
+            }.also { handler.postDelayed(it, (text.length*500L+30000L).coerceIn(60000L,240000L)) }
             for ((index, chunk) in chunks.withIndex()) {
                 if (!playback.current(batch.ticket)) return
                 val result = engine.speak(chunk, if (index == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD,
@@ -171,10 +221,12 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
     }
 
     private fun releaseFocus() {
+        timeout?.let(handler::removeCallbacks); timeout=null
         focus?.let { runCatching { audio.abandonAudioFocusRequest(it) } }
         focus = null
     }
     fun stop() {
+        timeout?.let(handler::removeCallbacks); timeout=null
         playback.cancel()
         runCatching { tts?.stop() }
         releaseFocus()
@@ -183,6 +235,8 @@ class SystemSpeechOutput(context: Context) : AutoCloseable {
     override fun close() {
         if (closed) return
         closed = true
+        initTimeout?.let(handler::removeCallbacks); initTimeout=null
+        initTicket++
         stop()
         runCatching { tts?.shutdown() }
         tts = null

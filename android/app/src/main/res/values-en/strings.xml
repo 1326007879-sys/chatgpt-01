@@ -74,7 +74,7 @@
     <string name="plugins_scope">Plugin integration and management are planned here. This page does not discover, install or load plugins.</string>
     <string name="voice_back">Back to chat</string>
     <string name="voice_settings">Speech settings</string>
-    <string name="voice_privacy">Reply reading uses your device’s speech engine; some voices need a network. Keyboard dictation is handled by your selected keyboard. This app does not record audio.</string>
+    <string name="voice_privacy">Only the current text is sent to the selected speech engine. System voices may use a network; the separate offline engine synthesizes locally. Keyboard dictation is handled by your selected keyboard. This app does not record audio.</string>
     <string name="voice_auto_read">Read new replies automatically</string>
     <string name="voice_auto_hint">Off by default. Only newly completed replies are read while this chat is visible. History, failed and interrupted replies are not read automatically. Leaving chat or switching to the background stops playback without resuming.</string>
     <string name="voice_preview">Preview voice</string>
@@ -216,6 +216,15 @@
     <string name="reminder_hint">Save a date and time. Reminders keep a separate copy; deleting the source note does not delete its reminder.</string>
     <string name="reminder_schedule_error">Reminder scheduling is incomplete. Open reminders, check notification permissions and retry.</string>
     <string name="reminder_saved">Saved and rescheduled.</string>
+    <string name="reminder_neural">Use the separate offline voice engine (install, import and enable first; notifications remain if speech fails)</string>
+    <string name="voice_engine_choice">Speech engine</string>
+    <string name="voice_system_engine">Device default engine</string>
+    <string name="voice_neural_engine">Separate offline voice engine</string>
+    <string name="voice_manage_engine">Manage offline voices</string>
+    <string name="voice_neural_hint">Install the separately signed matching engine, import a model and voice, then enable it. Only the current text is sent to the selected engine. New voices still need listening acceptance.</string>
+    <string name="voice_neural_unavailable">Offline voice engine unavailable. Check installation, matching signature, model, voice and enablement. Another voice will not be used automatically.</string>
+    <string name="reminder_diagnostic_none">No record</string>
+    <string name="reminder_diagnostics">Scheduled: %1$s\nLast receiver wake: %2$s\nLast notification posted: %3$s\nThese records help diagnose delivery; posting does not confirm the notification was seen or heard.</string>
     <string name="reminder_save_error">Operation incomplete. Check date, time, plugin authorization and storage. Reopen this page to restore scheduling if already saved.</string>
     <string name="reminder_speech_error">Speech failed. The text notification remains available.</string>
     <string name="reminder_allow_notifications">Allow reminder notifications</string>
@@ -228,7 +237,7 @@
     <string name="reminder_zone">Fixed timezone: %1$s</string>
     <string name="reminder_daily">Repeat daily</string>
     <string name="reminder_speak">Read aloud when due</string>
-    <string name="reminder_voice_hint">Uses the system voice selected in chat settings. No automatic speech while locked. Background restrictions may prevent speech; use Read in the notification. System voices may require a network connection.</string>
+    <string name="reminder_voice_hint">Uses an available voice from the selected engine. No automatic speech while locked. Background restrictions may prevent speech; use Read in the notification. System voices may need a network. Offline engine failure keeps the notification and does not automatically substitute another voice.</string>
     <string name="reminder_save">Save reminder</string>
     <string name="reminder_new">New reminder</string>
     <string name="reminder_list">Saved reminders</string>

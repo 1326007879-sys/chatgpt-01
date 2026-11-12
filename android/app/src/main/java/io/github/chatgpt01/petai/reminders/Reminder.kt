@@ -33,7 +33,8 @@ data class ReminderDraft(
                 .atZone(ZoneId.of(zoneId)).toInstant() == instant)
         }
         // Future voice plugins require a separately granted provider; no arbitrary component loading.
-        require(voiceProvider == "system" && voiceId.length <= 256)
+        require(voiceProvider in setOf("system", "neural") && voiceId.length <= 256)
+        require(voiceProvider != "neural" || voiceId.isEmpty() || voiceId.startsWith("petai.neural."))
     }
 
     /** Fixed chosen timezone. DST gap shifts forward; overlap uses the earlier offset, once a day. */
