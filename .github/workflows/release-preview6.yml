@@ -1,0 +1,109 @@
+name: Publish reminder diagnostics preview 6
+on:
+  push:
+    branches: [feat/voice-plugin-reminder-diagnostics]
+    paths: [.github/workflows/release-preview6.yml]
+permissions:
+  contents: read
+concurrency:
+  group: publish-preview-6
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: 1326007879-sys/chatgpt-01
+      TAG: v0.1.0-preview.6
+      RELEASE_ID: '444305907'
+      SOURCE_SHA: 3565e2a89464e62b8c2c955e3e5978d80bfeaff7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 3565e2a89464e62b8c2c955e3e5978d80bfeaff7
+          persist-credentials: false
+      - name: Verify repository, immutable source and empty draft
+        run: |
+          test "$GITHUB_REPOSITORY" = "$GH_REPO"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          gh api "repos/$GH_REPO/releases/$RELEASE_ID" > /tmp/preview6-draft.json
+          python - <<'PY'
+          import json,os
+          r=json.load(open('/tmp/preview6-draft.json'))
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG'] and not r['assets']
+          PY
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install build requirements
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-36' 'build-tools;35.0.0'
+          python -m pip install -r requirements-dev.txt
+          python scripts/prepare_voice_engine.py runtime
+      - run: python -m pytest -q
+      - run: python -m ruff check scripts tools tests
+      - name: Validate and build final preview identity
+        working-directory: android
+        run: bash gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest :voice-engine:testDebugUnitTest :voice-engine:lintDebug :voice-engine:assembleDebug :voice-engine:assembleDebugAndroidTest :plugin-notes:testDebugUnitTest -PpetPreviewInstall=true -PpetPython="$(command -v python)" --console=plain
+      - name: Prepare host-only release and record CI signing origin
+        run: |
+          python scripts/prepare_preview6_release.py
+          python - <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          root=Path('dist/preview6-publication')
+          p=root/'SOURCE.json';r=json.loads(p.read_text())
+          r['signing']='GitHub Actions ephemeral Android Debug certificate; independent preview6 identity, no overwrite of preview5'
+          r['publisher_commit']=os.environ['GITHUB_SHA']
+          r['run_url']='https://github.com/'+os.environ['GH_REPO']+'/actions/runs/'+os.environ['GITHUB_RUN_ID']
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          def digest(p):
+              with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+          files=[p for p in sorted(root.iterdir()) if p.name!='SHA256SUMS.txt']
+          (root/'SHA256SUMS.txt').write_text(''.join(digest(p)+'  '+p.name+'\n' for p in files))
+          expected={p.name:{'bytes':p.stat().st_size,'sha256':digest(p)} for p in sorted(root.iterdir())}
+          assert len(expected)==10
+          Path('dist/preview6-expected.json').write_text(json.dumps(expected,indent=2))
+          PY
+          (cd dist/preview6-publication && sha256sum -c SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview6-host-publication
+          path: |
+            dist/preview6-publication/
+            dist/preview6-expected.json
+          compression-level: 0
+          retention-days: 7
+      - name: Upload, verify server digests, then publish authorized preview
+        run: |
+          python - <<'PY'
+          import os,json,subprocess
+          from pathlib import Path
+          from concurrent.futures import ThreadPoolExecutor
+          repo=os.environ['GH_REPO'];endpoint=f"repos/{repo}/releases/{os.environ['RELEASE_ID']}"
+          def api(path):return json.loads(subprocess.check_output(['gh','api',path],text=True))
+          r=api(endpoint)
+          assert r['draft'] and r['prerelease'] and r['tag_name']==os.environ['TAG'] and not r['assets']
+          obj=api(f'repos/{repo}/git/ref/tags/'+os.environ['TAG'])['object']
+          target=api(f'repos/{repo}/git/tags/'+obj['sha'])['object']['sha'] if obj['type']=='tag' else obj['sha']
+          assert target==os.environ['SOURCE_SHA']
+          expected=json.loads(Path('dist/preview6-expected.json').read_text())
+          def upload(name):
+              subprocess.run(['gh','release','upload',os.environ['TAG'],str(Path('dist/preview6-publication')/name),'--repo',repo],check=True)
+          with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(upload,expected))
+          assets={a['name']:a for a in api(endpoint+'/assets?per_page=100')}
+          assert set(assets)==set(expected)
+          for name,v in expected.items():
+              a=assets[name]
+              assert a['state']=='uploaded' and a['size']==v['bytes'] and a['digest']=='sha256:'+v['sha256'],name
+          body=Path('/tmp/preview6-publish.json')
+          body.write_text(json.dumps({'tag_name':os.environ['TAG'],'target_commitish':os.environ['SOURCE_SHA'],'draft':False,'prerelease':True,'make_latest':'false'}))
+          subprocess.run(['gh','api','--method','PATCH',endpoint,'--input',str(body),'--jq','{id,html_url,draft,prerelease}'],check=True)
+          PY
