@@ -18,7 +18,7 @@ class NeuralVoiceService : TextToSpeechService() {
     companion object {
         const val PREFIX = "petai.neural."
         private val HOSTS = setOf("io.github.chatgpt01.petai", "io.github.chatgpt01.petai.development",
-            "io.github.chatgpt01.petai.preview5", "io.github.chatgpt01.voice")
+            "io.github.chatgpt01.petai.preview5", "io.github.chatgpt01.petai.preview6", "io.github.chatgpt01.voice")
     }
     private val serial = AtomicLong()
     private val running = AtomicLong()
