@@ -39,7 +39,9 @@ def main():
         catalog = json.loads(archive.read("assets/pet/manifest.json"))
         assert len(catalog["clips"]) == 11
         assert sum(c["frames"] for c in catalog["clips"]) == 2651
-        assert not any(p.startswith("lib/") or p.endswith((".onnx", ".petmodel", ".petvoice")) for p in archive.namelist())
+        native = [p for p in archive.namelist() if p.startswith("lib/") and not p.endswith("/")]
+        assert native and all(Path(p).name == "libandroidx.graphics.path.so" for p in native)
+        assert not any(p.endswith((".onnx", ".petmodel", ".petvoice")) for p in archive.namelist())
     (output / "SIGNATURES.txt").write_text(name + "\n" + signatures)
     (output / "APK-METADATA.txt").write_text(name + "\n" + metadata)
     counts = {}
