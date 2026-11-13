@@ -48,3 +48,7 @@ python scripts/prepare_voice_engine.py voice --reference /path/to/reference.wav 
 单次合成最多 200 个 UTF-16 字符；宿主保留中文/emoji 完整性分段。PCM 分块传递，不通过 Binder 发送整段大音频。停止会取消当前播放和后续排队，并用任务代次忽略旧回调；原生计算在回调处响应停止，不能承诺即时释放 CPU。合成最长 180 秒，超时结束引擎合成进程；主应用仍保留文字和通知。宿主另有播放超时提示。
 
 Linux 试听基准不能作为安卓性能数据；软件模拟器也不能作为手机发热、功耗或真实时延基准。公开发布前仍需实际 ARM 设备的冷启动、首句延迟、内存、长句、数字、多音字、停止/重入、进程死亡和连续使用验收。测试结果与未完成项见 implementation/VOICE-PLUGIN-RESUMPTION.md。
+
+## 当前验收安排
+
+用户已认可新Qwen参考可作音色模板，安卓实际ZipVoice输出仍需单独确认。安装/提醒/语音的验收步骤见[验收手册](VOICE_ACCEPTANCE.md)，资源许可与发行门槛见[发布准备记录](implementation/VOICE-RELEASE-PREPARATION.md)。本轮不自动发布，不改变当前公开预览5下载。
